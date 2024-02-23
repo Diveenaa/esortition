@@ -44,15 +44,11 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
-      
-      - name: Build Docker image
-        run: |
-          docker build -t esortition:latest -f ./Dockerfile
 
-    #   - name: Build and push Docker image
-    #     run: |
-    #       docker-compose build
-    #       docker-compose push
+      - name: Build and push Docker image
+        run: |
+          docker-compose build
+          docker-compose push
 
     #   - name: Build, tag, and push container image
     #     id: build-image
