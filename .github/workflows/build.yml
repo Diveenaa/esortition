@@ -45,12 +45,17 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Build, tag, and push container image
-        id: build-image
+      - name: Build and push Docker image
         run: |
-          docker build -t esortition:latest .
-          docker tag esortition:latest ${{ steps.login-ecr.outputs.registry }}/esortition:latest
-          docker push ${{ steps.login-ecr.outputs.registry }}/esortition:latest
+          docker-compose build
+          docker-compose push
+
+    #   - name: Build, tag, and push container image
+    #     id: build-image
+    #     run: |
+    #       docker build -t esortition:latest -f /path/to/Dockerfile .
+    #       docker tag esortition:latest ${{ steps.login-ecr.outputs.registry }}/esortition:latest
+    #       docker push ${{ steps.login-ecr.outputs.registry }}/esortition:latest
 
     #   - name: Deploy to Amazon ECS
     #     run: |
