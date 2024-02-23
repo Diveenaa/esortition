@@ -48,7 +48,7 @@ jobs:
       - name: Build, tag, and push container image
         id: build-image
         run: |
-          docker build -t esortition:latest esortition
+          docker build -t esortition:latest /
         #   docker tag esortition:latest ${{ steps.login-ecr.outputs.registry }}/esortition:latest
         #   docker push ${{ steps.login-ecr.outputs.registry }}/esortition:latest
 
