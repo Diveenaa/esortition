@@ -29,7 +29,7 @@ jobs:
         run: pytest test.py 
 
   deploy:
-    name: Deploy to Amazon ECS
+    name: Deploy to Container Registry
     needs: build
     runs-on: ubuntu-latest
 
@@ -37,23 +37,31 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-2
+    #   - name: Configure AWS credentials
+    #     uses: aws-actions/configure-aws-credentials@v2
+    #     with:
+    #       aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    #       aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    #       aws-region: eu-west-2
 
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
+    #   - name: Login to Amazon ECR
+    #     id: login-ecr
+    #     uses: aws-actions/amazon-ecr-login@v1
 
       - name: Build, tag, and push main container image
         id: build-image
         run: |
-          docker build -t esortition:latest .
-          docker tag esortition:latest ${{ steps.login-ecr.outputs.registry }}/esortition:latest
-          docker push ${{ steps.login-ecr.outputs.registry }}/esortition:latest
+            docker build -t esortition:latest .
+            docker tag esortition:latest ghcr.io/diveenaa/esortition:latest
+            docker push ghcr.io/diveenaa/esortition:latest
+
+
+    #   - name: Build, tag, and push main container image
+    #     id: build-image
+    #     run: |
+    #       docker build -t esortition:latest .
+    #       docker tag esortition:latest ${{ steps.login-ecr.outputs.registry }}/esortition:latest
+    #       docker push ${{ steps.login-ecr.outputs.registry }}/esortition:latest
 
     #   - name: Deploy to Amazon ECS
     #     run: |
