@@ -12,21 +12,21 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
+        uses: actions/checkout@v3
+    
+      - name: Setup Python
+        uses: actions/setup-python@v4
         with:
-          node-version: '14'
+          python-version: 3.9
 
       - name: Install dependencies
-        run: npm install
+        run: pip install -r requirements.txt
 
-      - name: Run linting
-        run: npm run lint
+      - name: Run flake8
+        run: flake8 app.py
 
       - name: Run unit tests
-        run: npm test
+        run: pytest test.py 
 
   deploy:
     name: Deploy to Amazon ECS
