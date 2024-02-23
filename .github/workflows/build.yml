@@ -48,8 +48,22 @@ jobs:
     #     id: login-ecr
     #     uses: aws-actions/amazon-ecr-login@v1
 
+        # TODO: 
+        # Log into GitHub Container Registry
+      - name: Log into GHCR
+        run: echo "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" | docker login ghcr.io -u diveenaa --password-stdin
+
+
+      - name: Build, tag, and push microservice1 container image
+        id: build-microservice1-image
+        run: |
+            docker build -t microservice1:latest /microservice1/.
+            docker tag esortition:latest ghcr.io/diveenaa/microservice1:latest
+            docker push ghcr.io/diveenaa/microservice1:latest
+
+
       - name: Build, tag, and push main container image
-        id: build-image
+        id: build-main-image
         run: |
             docker build -t esortition:latest .
             docker tag esortition:latest ghcr.io/diveenaa/esortition:latest
