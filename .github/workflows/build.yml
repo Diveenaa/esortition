@@ -45,10 +45,14 @@ jobs:
     #     id: login-ecr
     #     uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Build, tag, and push container image
-        id: build-image
+      - name: Print Current Directory
         run: |
-          docker build -t esortition:latest /
+          echo "Current directory: $(pwd)"
+
+    #   - name: Build, tag, and push container image
+    #     id: build-image
+    #     run: |
+    #       docker build -t esortition:latest /
         #   docker tag esortition:latest ${{ steps.login-ecr.outputs.registry }}/esortition:latest
         #   docker push ${{ steps.login-ecr.outputs.registry }}/esortition:latest
 
