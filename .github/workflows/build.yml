@@ -49,10 +49,14 @@ jobs:
         run: |
           echo "Current directory: $(pwd)"
 
+      - name: List Contents of Current Directory
+        run: |
+            ls -al
+
     #   - name: Build, tag, and push container image
     #     id: build-image
     #     run: |
-    #       docker build -t esortition:latest /
+    #       docker build -t esortition:latest .
         #   docker tag esortition:latest ${{ steps.login-ecr.outputs.registry }}/esortition:latest
         #   docker push ${{ steps.login-ecr.outputs.registry }}/esortition:latest
 
