@@ -66,10 +66,15 @@ jobs:
         id: build-microservice1-image
         run: |
             docker build -t microservice1:latest microservice1
-            docker tag esortition:latest ghcr.io/${{ secrets.GHCR_USERNAME }}/microservice1:latest
+            docker tag microservice1:latest ghcr.io/${{ secrets.GHCR_USERNAME }}/microservice1:latest
             docker push ghcr.io/${{ secrets.GHCR_USERNAME }}/microservice1:latest
-            
 
+      - name: Build, tag, and push microservice2 container image
+        id: build-microservice2-image
+        run: |
+            docker build -t microservice2:latest microservice2
+            docker tag microservice2:latest ghcr.io/${{ secrets.GHCR_USERNAME }}/microservice2:latest
+            docker push ghcr.io/${{ secrets.GHCR_USERNAME }}/microservice2:latest
 
     #   - name: Build, tag, and push main container image
     #     id: build-image
