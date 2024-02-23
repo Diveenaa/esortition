@@ -55,12 +55,12 @@ jobs:
         run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
 
 
-      - name: Build, tag, and push microservice1 container image
-        id: build-microservice1-image
-        run: |
-            docker build -t microservice1:latest /microservice1/.
-            docker tag esortition:latest ghcr.io/${{ secrets.GHCR_USERNAME }}/microservice1:latest
-            docker push ghcr.io/${{ secrets.GHCR_USERNAME }}/microservice1:latest
+    #   - name: Build, tag, and push microservice1 container image
+    #     id: build-microservice1-image
+    #     run: |
+    #         docker build -t microservice1:latest /microservice1/.
+    #         docker tag esortition:latest ghcr.io/${{ secrets.GHCR_USERNAME }}/microservice1:latest
+    #         docker push ghcr.io/${{ secrets.GHCR_USERNAME }}/microservice1:latest
 
 
       - name: Build, tag, and push main container image
