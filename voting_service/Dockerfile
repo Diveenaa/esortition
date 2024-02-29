@@ -1,12 +1,12 @@
 FROM python
 
-WORKDIR /microservice1-app
+WORKDIR /voting_service-app
 
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 COPY . .
 
-ENV FLASK_APP=/microservice1-app/micro_app.py
+ENV FLASK_APP=/voting_service-app/voting_app.py
 ENV FLASK_ENV=development
 
 EXPOSE 5001

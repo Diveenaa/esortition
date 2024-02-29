@@ -12,11 +12,11 @@ services:
   microservice1-app:
     build: ./microservice1
     environment:
-      - FLASK_APP=/microservice1-app/micro_app.py
+      - FLASK_APP=/voting_service-app/voting_app.py
     ports:
       - '5002:5001'
     volumes:
-      - ./microservice1:/microservice1-app
+      - ./voting_service:/voting_service-app
 
   microservice2-app:
     build: ./microservice2
@@ -26,3 +26,12 @@ services:
       - '5003:5002'
     volumes:
       - ./microservice2:/microservice2-app
+
+  # db:
+  #   image: postgres:latest
+  #   environment:
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: postgres
+  #     POSTGRES_DB: esortition_voting
+  # ports:
+  #   - '5432:5432'
