@@ -1,22 +1,28 @@
+version: '3.8'
 services:
-  
   esortition-app:
     build: .
     environment:
       - FLASK_APP=/esortition-app/app.py
     ports:
-      - "5001:5000"
-  
+      - '5001:5000'
+    volumes:
+      - .:/esortition-app
+
   microservice1-app:
     build: ./microservice1
     environment:
       - FLASK_APP=/microservice1-app/micro_app.py
     ports:
-      - "5002:5001"
+      - '5002:5001'
+    volumes:
+      - ./microservice1:/microservice1-app
 
   microservice2-app:
     build: ./microservice2
     environment:
       - FLASK_APP=/microservice2-app/micro_app.py
     ports:
-      - "5003:5002"
+      - '5003:5002'
+    volumes:
+      - ./microservice2:/microservice2-app
