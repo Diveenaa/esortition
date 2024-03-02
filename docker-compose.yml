@@ -1,13 +1,13 @@
 version: '3.8'
 services:
-  esortition-app:
-    build: .
+  admin_app-app:
+    build: ./admin_app
     environment:
-      - FLASK_APP=/esortition-app/app.py
+      - FLASK_APP=/admin_app-app/app.py
     ports:
       - '5001:5000'
     volumes:
-      - .:/esortition-app
+      - ./admin_app:/admin_app-app
 
   voting_service-app:
     build: ./voting_service

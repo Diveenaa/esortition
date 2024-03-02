@@ -1,12 +1,12 @@
 FROM python
 
-WORKDIR /esortition-app
+WORKDIR /admin_app-app
 
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 COPY . .
 
-ENV FLASK_APP=/esortition-app/app.py
+ENV FLASK_APP=/admin_app-app/app.py
 ENV FLASK_ENV=development
 
 EXPOSE 5000
