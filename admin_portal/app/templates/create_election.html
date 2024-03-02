@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mt-5">
+<div class="container mt-5" style="max-width: 1000px; margin: auto;">
     <h1 class="title">Create New Election</h1>
     <div class="box">
         <form method="POST" enctype="multipart/form-data">
@@ -9,15 +9,21 @@
             <div class="field">
                 <label class="label">{{ form.title.label }}</label>
                 <div class="control">
-                    {{ form.title(class_="input", size=32) }}
+                    {{ form.title(class_="input", size=20) }}
                 </div>
             </div>
             <div class="field">
                 <label class="label">{{ form.description.label }}</label>
                 <div class="control">
-                    {{ form.description(class_="textarea", cols=32, rows=4) }}
+                    {{ form.description(class_="textarea", cols=20, rows=4) }}
                 </div>
             </div>
+            <div class="field">
+              <label class="label">{{ form.end_date.label }}</label>
+              <div class="control">
+                  {{ form.end_date(class_="input", type="datetime-local", style="width: 200px; margin: auto; display: block;") }}
+              </div>
+          </div>
             <div class="field">
                 <label class="label">{{ form.voter_file.label }}
                     <p class="help">CSV format: email,fullname</p>

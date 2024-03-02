@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 
 from flask import flash, redirect, Response
 import csv
+from datetime import datetime
 from io import StringIO
 from .models import Election, Voter
 from .forms import ElectionForm
@@ -29,8 +30,9 @@ def profile():
 @login_required
 def create_election():
     form = ElectionForm()
+    print(form.title.data)
     if form.validate_on_submit():
-        election = Election(title=form.title.data, description=form.description.data, creator=current_user)
+        election = Election(title=form.title.data, description=form.description.data, end_date=form.end_date.data, creator=current_user)
         db.session.add(election)
         db.session.commit()
         
@@ -48,6 +50,8 @@ def create_election():
             flash('Election and voter information uploaded successfully!')
         flash('Election created successfully!')
         return redirect(url_for('main.my_elections'))
+    else:
+        print(form.errors)
     
     return render_template('create_election.html', form=form)
 
