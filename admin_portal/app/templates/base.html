@@ -41,6 +41,16 @@
                                 Home
                             </a>
                             {% if current_user.is_authenticated %}
+                            <a href="{{ url_for('main.create_election') }}" class="navbar-item">
+                                Create Election
+                            </a>
+                            {% endif %}
+                            {% if current_user.is_authenticated %}
+                            <a href="{{ url_for('main.my_elections') }}" class="navbar-item">
+                                My Elections
+                            </a>
+                            {% endif %}
+                            {% if current_user.is_authenticated %}
                             <a href="{{ url_for('main.profile') }}" class="navbar-item">
                                 Profile
                             </a>

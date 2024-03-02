@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="title">My Elections</h1>
+    <a href="{{ url_for('main.create_election') }}" class="button is-primary">Create New Election</a>
+    <div class="box">
+        {% if elections %}
+            {% for election in elections %}
+            <article class="media">
+                <div class="media-content">
+                    <div class="content">
+                        <p>
+                            <strong>{{ election.title }}</strong> <br>
+                            {{ election.description }}
+                            <!-- Voter details -->
+                            <details>
+                                <summary>Voters</summary>
+                                <ul>
+                                {% for voter in election.voters %}
+                                    <li>{{ voter.email }} - {{ voter.name }}</li>
+                                {% else %}
+                                    <li>No voters added yet.</li>
+                                {% endfor %}
+                                </ul>
+                            </details>
+                            <!-- Download CSV -->
+                            <a href="{{ url_for('main.download_voters', election_id=election.id) }}" class="button is-small is-info">Download Voters CSV</a>
+                        </p>
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        {% else %}
+            <p>You have not created any elections yet.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

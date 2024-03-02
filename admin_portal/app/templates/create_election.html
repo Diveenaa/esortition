@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="title">Create New Election</h1>
+    <div class="box">
+        <form method="POST" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            <div class="field">
+                <label class="label">{{ form.title.label }}</label>
+                <div class="control">
+                    {{ form.title(class_="input", size=32) }}
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">{{ form.description.label }}</label>
+                <div class="control">
+                    {{ form.description(class_="textarea", cols=32, rows=4) }}
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">{{ form.voter_file.label }}
+                    <p class="help">CSV format: email,fullname</p>
+                    <p class="help">Example: voter@example.com,fullname</p>
+                </label>
+                <div class="file has-name">
+                    <label class="file-label">
+                        {{ form.voter_file(class_="file-input") }}
+                        <span class="file-cta">
+                            <span class="file-icon">
+                                <i class="fas fa-upload"></i>
+                            </span>
+                            <span class="file-label">
+                                Choose a file…
+                            </span>
+                        </span>
+                        <span class="file-name">
+                            No file chosen
+                        </span>
+                    </label>
+                </div>
+            </div>
+            <div class="field is-grouped">
+                <div class="control">
+                    {{ form.submit(class_="button is-link") }}
+                </div>
+            </div>
+        </form>
+    </div>
+    <article class="message is-info">
+        <div class="message-body">
+            Make sure your CSV file is formatted correctly. Each line should contain one email address of a voter and their name, without headers. Example: <code>voter1@example.com,fullname</code>
+        </div>
+    </article>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+      const fileInput = document.querySelector('.file-input');
+      const fileLabel = document.querySelector('.file-name');
+      
+      fileInput.addEventListener('change', (e) => {
+          let fileName = e.target.files.length > 0 ? e.target.files[0].name : 'No file chosen';
+          fileLabel.textContent = fileName;
+      });
+  });
+  </script>
+
+{% endblock %}

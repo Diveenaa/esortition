@@ -4,31 +4,35 @@ from flask_login import LoginManager
 
 db = SQLAlchemy()
 
-def create_app():
-    app = Flask(__name__)
+app = Flask(__name__)
 
-    app.config['SECRET_KEY'] = 'secret-key-goes-here'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
+app.config['SECRET_KEY'] = 'secret-key-goes-here'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
 
-    db.init_app(app)
+db.init_app(app)
 
-    login_manager = LoginManager()
-    login_manager.login_view = 'auth.login'
-    login_manager.init_app(app)
 
+with app.app_context():
     from .models import User
+    db.drop_all()
+    db.create_all()
 
-    @login_manager.user_loader
-    def load_user(user_id):
-        # user_id is the primary key
-        return User.query.get(int(user_id))
+login_manager = LoginManager()
+login_manager.login_view = 'auth.login'
+login_manager.init_app(app)
 
-    # blueprint for auth routes in our app
-    from .auth import auth as auth_blueprint
-    app.register_blueprint(auth_blueprint)
+from .models import User
 
-    # blueprint for non-auth parts of app
-    from .main import main as main_blueprint
-    app.register_blueprint(main_blueprint)
+@login_manager.user_loader
+def load_user(user_id):
+    # user_id is the primary key
+    return User.query.get(int(user_id))
 
-    return app
+# blueprint for auth routes in our app
+from .auth import auth as auth_blueprint
+app.register_blueprint(auth_blueprint)
+
+# blueprint for non-auth parts of app
+from .main import main as main_blueprint
+app.register_blueprint(main_blueprint)
+
