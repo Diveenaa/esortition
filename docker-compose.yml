@@ -9,17 +9,17 @@ services:
     volumes:
       - ./admin_app:/admin_app-app
 
-  voting_service-app:
-    build: ./voting_service
+  voting_app-app:
+    build: ./voting_app
     environment:
-      - FLASK_APP=/voting_service-app/voting_app.py
-      - DATABASE_URL=postgresql://postgres:postgres@db/esortition_voting
+      - FLASK_APP=/voting_app-app/voting_app.py
+      # - DATABASE_URL=postgresql://postgres:postgres@db/esortition_voting
     ports:
       - '5002:5001'
     volumes:
-      - ./voting_service:/voting_service-app
-    depends_on:
-      - db
+      - ./voting_app:/voting_app-app
+    # depends_on:
+    #   - db
 
   microservice2-app:
     build: ./microservice2

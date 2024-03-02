@@ -61,12 +61,12 @@ jobs:
           docker tag esortition:latest ghcr.io/${{ secrets.GHCR_USERNAME }}/esortition:latest
           docker push ghcr.io/${{ secrets.GHCR_USERNAME }}/esortition:latest
 
-      - name: Build, tag, and push voting_service container image
-        id: build-voting_service-image
+      - name: Build, tag, and push voting_app container image
+        id: build-voting_app-image
         run: |
-          docker build -t voting_service:latest voting_service
-          docker tag voting_service:latest ghcr.io/${{ secrets.GHCR_USERNAME }}/voting_service:latest
-          docker push ghcr.io/${{ secrets.GHCR_USERNAME }}/voting_service:latest
+          docker build -t voting_app:latest voting_app
+          docker tag voting_app:latest ghcr.io/${{ secrets.GHCR_USERNAME }}/voting_app:latest
+          docker push ghcr.io/${{ secrets.GHCR_USERNAME }}/voting_app:latest
 
       - name: Build, tag, and push microservice2 container image
         id: build-microservice2-image
