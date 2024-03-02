@@ -9,14 +9,17 @@ services:
     volumes:
       - .:/esortition-app
 
-  microservice1-app:
-    build: ./microservice1
+  voting_service-app:
+    build: ./voting_service
     environment:
       - FLASK_APP=/voting_service-app/voting_app.py
+      - DATABASE_URL=postgresql://postgres:postgres@db/esortition_voting
     ports:
       - '5002:5001'
     volumes:
       - ./voting_service:/voting_service-app
+    depends_on:
+      - db
 
   microservice2-app:
     build: ./microservice2
@@ -27,11 +30,11 @@ services:
     volumes:
       - ./microservice2:/microservice2-app
 
-  # db:
-  #   image: postgres:latest
-  #   environment:
-  #     POSTGRES_USER: postgres
-  #     POSTGRES_PASSWORD: postgres
-  #     POSTGRES_DB: esortition_voting
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: esortition_voting
   # ports:
   #   - '5432:5432'

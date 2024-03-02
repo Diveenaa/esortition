@@ -13,7 +13,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-    
+
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
@@ -26,7 +26,7 @@ jobs:
         run: flake8 app.py
 
       - name: Run unit tests
-        run: pytest test.py 
+        run: pytest test.py
 
   deploy:
     name: Deploy to Container Registry
@@ -37,44 +37,43 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-    #   - name: Configure AWS credentials
-    #     uses: aws-actions/configure-aws-credentials@v2
-    #     with:
-    #       aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-    #       aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    #       aws-region: eu-west-2
+      #   - name: Configure AWS credentials
+      #     uses: aws-actions/configure-aws-credentials@v2
+      #     with:
+      #       aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #       aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #       aws-region: eu-west-2
 
-    #   - name: Login to Amazon ECR
-    #     id: login-ecr
-    #     uses: aws-actions/amazon-ecr-login@v1
+      #   - name: Login to Amazon ECR
+      #     id: login-ecr
+      #     uses: aws-actions/amazon-ecr-login@v1
 
-        # TODO: 
-        # Log into GitHub Container Registry
-    # Log into GitHub Container Registry
+      # TODO:
+      # Log into GitHub Container Registry
+      # Log into GitHub Container Registry
       - name: Log into GHCR
         run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
-
 
       - name: Build, tag, and push main container image
         id: build-main-image
         run: |
-            docker build -t esortition:latest .
-            docker tag esortition:latest ghcr.io/${{ secrets.GHCR_USERNAME }}/esortition:latest
-            docker push ghcr.io/${{ secrets.GHCR_USERNAME }}/esortition:latest
+          docker build -t esortition:latest .
+          docker tag esortition:latest ghcr.io/${{ secrets.GHCR_USERNAME }}/esortition:latest
+          docker push ghcr.io/${{ secrets.GHCR_USERNAME }}/esortition:latest
 
-      - name: Build, tag, and push microservice1 container image
-        id: build-microservice1-image
+      - name: Build, tag, and push voting_service container image
+        id: build-voting_service-image
         run: |
-            docker build -t microservice1:latest microservice1
-            docker tag microservice1:latest ghcr.io/${{ secrets.GHCR_USERNAME }}/microservice1:latest
-            docker push ghcr.io/${{ secrets.GHCR_USERNAME }}/microservice1:latest
+          docker build -t voting_service:latest voting_service
+          docker tag voting_service:latest ghcr.io/${{ secrets.GHCR_USERNAME }}/voting_service:latest
+          docker push ghcr.io/${{ secrets.GHCR_USERNAME }}/voting_service:latest
 
       - name: Build, tag, and push microservice2 container image
         id: build-microservice2-image
         run: |
-            docker build -t microservice2:latest microservice2
-            docker tag microservice2:latest ghcr.io/${{ secrets.GHCR_USERNAME }}/microservice2:latest
-            docker push ghcr.io/${{ secrets.GHCR_USERNAME }}/microservice2:latest
+          docker build -t microservice2:latest microservice2
+          docker tag microservice2:latest ghcr.io/${{ secrets.GHCR_USERNAME }}/microservice2:latest
+          docker push ghcr.io/${{ secrets.GHCR_USERNAME }}/microservice2:latest
 
     #   - name: Build, tag, and push main container image
     #     id: build-image

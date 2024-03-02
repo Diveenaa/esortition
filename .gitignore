@@ -1,4 +1,5 @@
 .venv
+.voting_service_venv
 .vscode
 setup_vars.sh
 # Byte-compiled / optimized / DLL files
