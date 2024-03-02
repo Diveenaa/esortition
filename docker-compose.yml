@@ -21,14 +21,14 @@ services:
     # depends_on:
     #   - db
 
-  microservice2-app:
-    build: ./microservice2
+  voting_manager-app:
+    build: ./voting_manager
     environment:
-      - FLASK_APP=/microservice2-app/micro_app.py
+      - FLASK_APP=/voting_manager-app/voting_manager_service.py
     ports:
       - '5003:5002'
     volumes:
-      - ./microservice2:/microservice2-app
+      - ./voting_manager:/voting_manager-app
 
   db:
     image: postgres:latest
