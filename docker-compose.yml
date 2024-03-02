@@ -21,14 +21,19 @@ services:
     # depends_on:
     #   - db
 
-  voting_manager-app:
+  voting_manager-service:
     build: ./voting_manager
     environment:
-      - FLASK_APP=/voting_manager-app/voting_manager_service.py
+      - DATABASE_URL=postgresql://postgres:postgres@db/esortition_voting
+      - FASTAPI_APP=/voting_manager-service/voting_manager_service.py
+      # - FLASK_APP=/voting_manager-app/voting_manager_service.py
+
     ports:
       - '5003:5002'
     volumes:
-      - ./voting_manager:/voting_manager-app
+      - ./voting_manager:/voting_manager-service
+    depends_on:
+      - db
 
   db:
     image: postgres:latest

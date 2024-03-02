@@ -1,7 +1,18 @@
-from flask import Flask
+from fastapi import FastAPI
 
-app = Flask(__name__)
+# from flask import Flask
+import os
 
-@app.route('/')
-def hello_microservice():
-    return "hello microservice fdsafd fdasfdasfdd safdsa 2"
+
+app = FastAPI()
+
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
+
+
+# app = Flask(__name__)
+
+# @app.route('/')
+# def hello_microservice():
+#     return "hello microservice fdsafd fdasfdasfdd safdsa 2"
