@@ -3,9 +3,10 @@
 {% block content %}
 <div class="container mt-5" style="max-width: 1000px; margin: auto;">
     <h1 class="title">Create New Election</h1>
-    <div class="box">
-        <form method="POST" enctype="multipart/form-data">
-            {{ form.hidden_tag() }}
+    <form method="POST" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        
+        <div class="box">
             <div class="field">
                 <label class="label">{{ form.title.label }}</label>
                 <div class="control">
@@ -19,11 +20,11 @@
                 </div>
             </div>
             <div class="field">
-              <label class="label">{{ form.end_date.label }}</label>
-              <div class="control">
-                  {{ form.end_date(class_="input", type="datetime-local", style="width: 200px; margin: auto; display: block;") }}
-              </div>
-          </div>
+                <label class="label">{{ form.end_date.label }}</label>
+                <div class="control">
+                    {{ form.end_date(class_="input", type="datetime-local", style="width: 200px; margin: auto; display: block;") }}
+                </div>
+            </div>
             <div class="field">
                 <label class="label">{{ form.voter_file.label }}
                     <p class="help">CSV format: email,fullname</p>
@@ -46,13 +47,32 @@
                     </label>
                 </div>
             </div>
-            <div class="field is-grouped">
+            <!-- Question Field -->
+            
+            {{ form.question.hidden_tag() }}
+            <div class="field">
+                <label class="label">{{ form.question.question_text.label }}</label>
                 <div class="control">
-                    {{ form.submit(class_="button is-link") }}
+                    {{ form.question.question_text(class_="input") }}
                 </div>
             </div>
-        </form>
-    </div>
+            <!-- Options Fields -->
+            {% for option_form in form.question.options %}
+              {{ option_form.hidden_tag() }}
+            <div class="field">
+                <label class="label">{{ option_form.option.label }}</label>
+                <div class="control">
+                    {{ option_form.option(class_="input") }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="field is-grouped">
+            <div class="control">
+                {{ form.submit(class_="button is-link") }}
+            </div>
+        </div>
+    </form>
     <article class="message is-info">
         <div class="message-body">
             Make sure your CSV file is formatted correctly. Each line should contain one email address of a voter and their name, without headers. Example: <code>voter1@example.com,fullname</code>
@@ -70,6 +90,6 @@
           fileLabel.textContent = fileName;
       });
   });
-  </script>
+</script>
 
 {% endblock %}

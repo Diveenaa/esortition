@@ -5,8 +5,8 @@ from flask import flash, redirect, Response
 import csv
 from datetime import datetime
 from io import StringIO
-from .models import Election, Voter
-from .forms import ElectionForm
+from .models import Election, Question, Option, Voter
+from .forms import ElectionForm, QuestionForm, OptionForm
 
 from . import db
 
@@ -30,10 +30,19 @@ def profile():
 @login_required
 def create_election():
     form = ElectionForm()
-    print(form.title.data)
     if form.validate_on_submit():
         election = Election(title=form.title.data, description=form.description.data, end_date=form.end_date.data, creator=current_user)
         db.session.add(election)
+        db.session.commit()
+        
+        # Handling the question and options
+        question = Question(text=form.question.question_text.data, election_id=election.id)
+        db.session.add(question)
+        db.session.commit()
+
+        for option_form in form.question.options.entries:
+            option = Option(text=option_form.data['option'], question_id=question.id)
+            db.session.add(option)
         db.session.commit()
         
         if form.voter_file.data:

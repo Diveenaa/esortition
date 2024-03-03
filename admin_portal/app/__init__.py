@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+# from flask_wtf import CSRFProtect
 
 db = SQLAlchemy()
 
@@ -8,6 +9,7 @@ app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'secret-key-goes-here'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
+# csrf = CSRFProtect(app)
 
 db.init_app(app)
 
