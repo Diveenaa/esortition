@@ -1,4 +1,3 @@
-
 FROM python
 
 WORKDIR /voting_manager-service

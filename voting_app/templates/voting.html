@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -14,5 +14,33 @@
       <button type="submit" name="vote" value="yes">Yes</button>
       <button type="submit" name="vote" value="no">No</button>
     </form>
+  </body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Voting Page</title>
+  </head>
+  <body>
+    <h1>Vote Now!</h1>
+    <form action="/" method="post">
+      <input type="radio" id="yes" name="vote" value="yes" />
+      <label for="yes">Yes</label><br />
+      <input type="radio" id="no" name="vote" value="no" />
+      <label for="no">No</label><br />
+      <button type="submit">Submit Vote</button>
+    </form>
+
+    <h2>Voter Information</h2>
+    <ul>
+      {% for voter in voters %}
+      <li>Username: {{ voter.username }}, Age: {{ voter.age }}</li>
+      {% else %}
+      <li>No voters found.</li>
+      {% endfor %}
+    </ul>
   </body>
 </html>
