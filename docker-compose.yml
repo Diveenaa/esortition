@@ -21,10 +21,19 @@ services:
     # depends_on:
     #   - db
 
+  # Voting Microservice
+
+  voting_db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: esortition_voting
+
   voting_manager-service:
     build: ./voting_manager
     environment:
-      - DATABASE_URL=postgresql://postgres:postgres@db/esortition_voting
+      - DATABASE_URL=postgresql://postgres:postgres@voting_db/esortition_voting
       - FASTAPI_APP=/voting_manager-service/voting_manager_service.py
       # - FLASK_APP=/voting_manager-app/voting_manager_service.py
 
@@ -33,13 +42,7 @@ services:
     volumes:
       - ./voting_manager:/voting_manager-service
     depends_on:
-      - db
+      - voting_db
 
-  db:
-    image: postgres:latest
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: esortition_voting
   # ports:
   #   - '5432:5432'
