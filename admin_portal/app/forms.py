@@ -3,11 +3,12 @@ from wtforms import StringField, TextAreaField, SubmitField, FileField, DateTime
 from wtforms.validators import DataRequired
 
 class OptionForm(FlaskForm):
-    option = StringField('Option', validators=[DataRequired()])
+    option = StringField('Option')
+    # option = StringField('Option', validators=[DataRequired()])
 
 class QuestionForm(FlaskForm):
     question_text = StringField('Question', validators=[DataRequired()])
-    options = FieldList(FormField(OptionForm), min_entries=3, max_entries=5)
+    options = FieldList(FormField(OptionForm), min_entries=2, max_entries=6)
 
 class ElectionForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])

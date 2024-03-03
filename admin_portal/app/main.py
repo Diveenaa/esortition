@@ -30,20 +30,27 @@ def profile():
 @login_required
 def create_election():
     form = ElectionForm()
+    while len(form.question.options) < 6:
+        form.question.options.append_entry()
+
     if form.validate_on_submit():
         election = Election(title=form.title.data, description=form.description.data, end_date=form.end_date.data, creator=current_user)
         db.session.add(election)
-        db.session.commit()
+        db.session.flush()
+        # db.session.commit()
         
         # Handling the question and options
         question = Question(text=form.question.question_text.data, election_id=election.id)
         db.session.add(question)
-        db.session.commit()
+        db.session.flush()
+        # db.session.commit()
 
         for option_form in form.question.options.entries:
-            option = Option(text=option_form.data['option'], question_id=question.id)
-            db.session.add(option)
-        db.session.commit()
+            if option_form.data['option']:  # Check if option text is provided
+                option = Option(text=option_form.data['option'], question_id=question.id)
+                db.session.add(option)
+                db.session.flush()
+        # db.session.commit()
         
         if form.voter_file.data:
             csv_file = form.voter_file.data.stream.read().decode("utf-8")
@@ -55,9 +62,14 @@ def create_election():
                 name = row[1] if len(row) > 1 else ''
                 voter = Voter(email=email, name=name, election_id=election.id)
                 db.session.add(voter)
-            db.session.commit()
+                db.session.flush()
+            # db.session.commit()
             flash('Election and voter information uploaded successfully!')
         flash('Election created successfully!')
+        
+        db.session.commit()
+
+
         return redirect(url_for('main.my_elections'))
     else:
         print(form.errors)
