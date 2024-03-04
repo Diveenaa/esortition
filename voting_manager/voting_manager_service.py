@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, status
 from sqlmodel import SQLModel, Field, Session, select, create_engine
 from typing import List
 # from flask import Flask
@@ -31,7 +31,7 @@ def on_startup():
     create_db_and_tables()
 
 
-@app.post("/votes/", response_model=Vote)
+@app.post("/votes/", status_code=status.HTTP_201_CREATED, response_model=Vote)
 def create_vote(vote: Vote, session: Session = Depends(get_session)):
     session.add(vote)
     session.commit()
