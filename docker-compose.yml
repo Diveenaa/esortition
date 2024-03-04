@@ -14,7 +14,7 @@ services:
   admin_portal-app:
     build: ./admin_portal
     environment:
-      - FLASK_APP=/admin_portal:app
+      - /admin_portal-app/app/main.py
     ports:
       - '5001:5000'
     volumes:
