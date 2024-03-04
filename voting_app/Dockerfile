@@ -9,6 +9,6 @@ COPY . .
 ENV FLASK_APP=/voting_app-app/voting_app.py
 ENV FLASK_ENV=development
 
-EXPOSE 5001
+EXPOSE 5002
 
-CMD [ "python3", "-m" , "flask", "run", "--reload", "--port=5001", "--host=0.0.0.0"]
+CMD [ "python3", "-m" , "flask", "run", "--reload", "--port=5002", "--host=0.0.0.0"]

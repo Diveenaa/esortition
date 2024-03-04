@@ -3,6 +3,7 @@
 .voting_manager_venv
 .election_mgmt_venv
 .admin_portal_venv
+.admin_mgmt_service_venv
 .vscode
 setup_vars.sh
 # Byte-compiled / optimized / DLL files

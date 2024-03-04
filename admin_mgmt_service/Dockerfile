@@ -8,6 +8,6 @@ COPY . .
 
 ENV FLASK_APP=/admin_mgmt_service-app/admin_service.py
 
-EXPOSE 3001
+EXPOSE 5004
 
-CMD [ "python3", "-m" , "flask", "run", "--port=3001", "--host=0.0.0.0"]
+CMD [ "python3", "-m" , "flask", "run", "--port=5004", "--host=0.0.0.0"]
