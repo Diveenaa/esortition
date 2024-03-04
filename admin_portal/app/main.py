@@ -76,7 +76,7 @@ def send_data_to_election_microservice(form_data):
     ######################## here we want to change to api gateway ##################
     token = session.get('token')
     print(token)
-    microservice_url = 'http://election_mgmt_service:5004/create-election'
+    microservice_url = 'http://election_mgmt_service-service:5002/create-election'
 
     try:
         response = requests.post(microservice_url, json=form_data, headers={'Authorization': token})
@@ -98,9 +98,10 @@ def send_data_to_election_microservice(form_data):
 def my_elections():
     token = session.get('token')
     print(token)
-    microservice_url = f'http://election_mgmt_service:5004/fetch-elections'
+    microservice_url = f'http://election_mgmt_service-service:5002/fetch-elections'
     try:
         response = make_request(microservice_url, token)
+        print(response.content)
         elections = response.json()
         if response.status_code == 200:
             return render_template('my_elections.html', elections=elections, is_authenticated=True)
@@ -116,7 +117,7 @@ def my_elections():
 @main.route('/download_voters/<int:election_id>')
 def download_voters(election_id):
     token = session.get('token')
-    microservice_url = f'http://election_mgmt_service:5004/election_voters/{election_id}'
+    microservice_url = f'http://election_mgmt_service-service:5002/election_voters/{election_id}'
     response = make_request(microservice_url, token)    
     si = StringIO()
     cw = csv.writer(si)

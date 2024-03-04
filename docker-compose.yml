@@ -37,7 +37,7 @@ services:
       # - DATABASE_URL=sqlite:///db.sqlite
       - DATABASE_URL=postgresql://postgres:postgres@election_mgmt_db/esortition_election_mgmt
     ports:
-      - '5004:5004'
+      - '3000:3000'
     volumes:
       - ./election_mgmt_service:/election_mgmt_service-service
       - ./data:/data # Mount a volume to persist the SQLite database file. Shouldn't need this.
@@ -74,7 +74,7 @@ services:
       - FLASK_APP=/voting_app-app/voting_app.py
       # - DATABASE_URL=postgresql://postgres:postgres@db/esortition_voting
     ports:
-      - '5002:5001'
+      - '5003:5001'
     volumes:
       - ./voting_app:/voting_app-app
 
@@ -95,7 +95,7 @@ services:
       - FASTAPI_APP=/voting_manager-service/voting_manager_service.py
       # - FLASK_APP=/voting_manager-app/voting_manager_service.py
     ports:
-      - '5003:5002'
+      - '5004:5002'
     volumes:
       - ./voting_manager:/voting_manager-service
     depends_on:

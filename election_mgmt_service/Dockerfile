@@ -8,6 +8,6 @@ COPY . .
 
 # ENV FLASK_APP=/election_mgmt_service-service/election_service.py
 
-EXPOSE 5004
+EXPOSE 3000
 
-CMD [ "python3", "-m" , "flask", "run", "--port=5004", "--host=0.0.0.0", "--reload"]
+CMD [ "python3", "-m" , "flask", "run", "--port=3000", "--host=0.0.0.0", "--reload"]
