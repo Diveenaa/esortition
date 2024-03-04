@@ -23,7 +23,7 @@ def profile():
     print(token)
     if not token:
         return redirect(url_for('auth.login'))  # Redirect to login if token is not found
-    microservice_url = 'http://127.0.0.1:5003/profile'
+    microservice_url = 'http://127.0.0.1:3001/profile'
     # Pass the token in the request headers when making the request
     response = make_request(microservice_url, token)
     if response and response.status_code == 200:
@@ -163,7 +163,7 @@ def is_authenticated():
     print(token)
     if not token:
         return False
-    microservice_url = 'http://127.0.0.1:5003/'
+    microservice_url = 'http://127.0.0.1:3001/'
     # Pass the token in the request headers when making the request
     response = make_request(microservice_url, token)
     data = response.json()
