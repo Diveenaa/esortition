@@ -1,5 +1,6 @@
 version: '3.8'
 services:
+  ############################## API GATEWAY #################################
   nginx-api-gateway:
     image: nginx:latest
     volumes:
@@ -8,34 +9,40 @@ services:
       - '80:80'
     depends_on:
       - voting_manager-service
-  
-  election_mgmt_service-app:
-    build: ./election_mgmt_service
-    environment:
-      - FLASK_APP=/election_mgmt_service-app/election_service.py
-      - DATABASE_URL=sqlite:///db.sqlite
-    ports:
-      - '3000:3000'
-    volumes:
-      - ./election_mgmt_service:/election_mgmt_service-app
-      - ./data:/data  # Mount a volume to persist the SQLite database file
-  
-  microservice1-app:
-    build: ./microservice1
-    environment:
-      - FLASK_APP=/microservice1-app/micro_app.py
-    ports:
-      - "5002:5001"
 
-  admin_app-app:
-    build: ./admin_app
+  ################################### ADMIN PORTAL ################################
+  admin_portal-app:
+    build: ./admin_portal
     environment:
-      - FLASK_APP=/admin_app-app/app.py
+      - FLASK_APP=/admin_portal:app
     ports:
       - '5001:5000'
     volumes:
-      - ./admin_app:/admin_app-app
+      - ./admin_portal:/admin_portal-app
 
+  ################### ELECTION MANAGEMENT MICROSERVICE ##########################
+  election_mgmt_db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: esortition_election_mgmt
+
+  election_mgmt_service-service:
+    build: ./election_mgmt_service
+    environment:
+      - FLASK_APP=/election_mgmt_service-service/election_service.py
+      # - DATABASE_URL=sqlite:///db.sqlite
+      - DATABASE_URL=postgresql://postgres:postgres@election_mgmt_db/esortition_election_mgmt
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./election_mgmt_service:/election_mgmt_service-service
+      - ./data:/data # Mount a volume to persist the SQLite database file. Shouldn't need this.
+    depends_on:
+      - election_mgmt_db
+
+  ############################## VOTING APP #####################################
   voting_app-app:
     build: ./voting_app
     environment:
@@ -45,11 +52,8 @@ services:
       - '5002:5001'
     volumes:
       - ./voting_app:/voting_app-app
-    # depends_on:
-    #   - db
 
-  # Voting Microservice
-
+  ########################### VOTING MICROSERVICE ################################
   voting_db:
     image: postgres:latest
     environment:
@@ -63,20 +67,9 @@ services:
       - DATABASE_URL=postgresql://postgres:postgres@voting_db/esortition_voting
       - FASTAPI_APP=/voting_manager-service/voting_manager_service.py
       # - FLASK_APP=/voting_manager-app/voting_manager_service.py
-
     ports:
       - '5003:5002'
     volumes:
       - ./voting_manager:/voting_manager-service
     depends_on:
       - voting_db
-
-  # ports:
-  #   - '5432:5432'
-
-  # db:
-  #   image: postgres:latest
-  #   environment:
-  #     POSTGRES_USER: postgres
-  #     POSTGRES_PASSWORD: postgres
-  #     POSTGRES_DB: esortition_voting

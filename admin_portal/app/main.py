@@ -62,6 +62,8 @@ def create_election():
 
 # API gateway needed to send data to backend
 def send_data_to_election_microservice(form_data):
+
+    ######################## here we want to change to api gateway ##################
     microservice_url = 'http://127.0.0.1:3000/create-election'
 
     try:
