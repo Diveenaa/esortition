@@ -16,7 +16,7 @@ services:
     environment:
       - /admin_portal-app/app/main.py
     ports:
-      - '5001:5000'
+      - '5000:5000'
     volumes:
       - ./admin_portal:/admin_portal-app
 
@@ -28,7 +28,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: esortition_election_mgmt
     ports:
-      - '5433:5432'
+      - '5433:5433'
 
   election_mgmt_service-service:
     build: ./election_mgmt_service
@@ -37,7 +37,7 @@ services:
       # - DATABASE_URL=sqlite:///db.sqlite
       - DATABASE_URL=postgresql://postgres:postgres@election_mgmt_db/esortition_election_mgmt
     ports:
-      - '3000:3000'
+      - '5004:5004'
     volumes:
       - ./election_mgmt_service:/election_mgmt_service-service
       - ./data:/data # Mount a volume to persist the SQLite database file. Shouldn't need this.
@@ -52,7 +52,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: esortition_admin_mgmt
     ports:
-      - '5434:5432'
+      - '5434:5434'
 
   admin_mgmt_service-service:
     build: ./admin_mgmt_service
@@ -86,7 +86,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: esortition_voting
     ports:
-      - '5435:5432'
+      - '5435:5435'
 
   voting_manager-service:
     build: ./voting_manager

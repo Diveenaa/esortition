@@ -18,7 +18,7 @@ def login_post():
         'remember': True if request.form.get('remember') else False
     }
 
-    microservice_url = 'http://127.0.0.1:3001/authenticate'
+    microservice_url = 'http://admin_mgmt_service-service:3001/authenticate'
 
     try:
         response = requests.post(microservice_url, json=data)
@@ -56,7 +56,7 @@ def signup_post():
             'password': request.form.get('password')
         }
     
-    microservice_url = 'http://127.0.0.1:3001/signup'
+    microservice_url = 'http://admin_mgmt_service-service:3001/signup'
 
     try:
         response = requests.post(microservice_url, json=data)
@@ -81,7 +81,7 @@ def signup_post():
 @auth.route('/logout')
 def logout():
     token = session.get('token')
-    microservice_url = 'http://127.0.0.1:3001/logout'
+    microservice_url = 'http://admin_mgmt_service-service:3001/logout'
 
     response = requests.get(microservice_url, headers={'Authorization': token})
     if response.status_code == 200:

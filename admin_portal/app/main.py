@@ -23,7 +23,7 @@ def profile():
     print(token)
     if not token:
         return redirect(url_for('auth.login'))  # Redirect to login if token is not found
-    microservice_url = 'http://127.0.0.1:3001/profile'
+    microservice_url = 'http://admin_mgmt_service-service:3001/profile'
     # Pass the token in the request headers when making the request
     response = make_request(microservice_url, token)
     if response and response.status_code == 200:
@@ -58,11 +58,11 @@ def create_election():
         }
 
         if send_data_to_election_microservice(form_data):
-            flash('Election created successfully!')
+            print('Election created successfully!')
             return redirect(url_for('main.my_elections'))
         
         else:
-            print(form.errors) #TO-DO - print the correct error
+            print('connection failed') #TO-DO - print the correct error
 
     else:
         print(form.errors)
@@ -76,7 +76,7 @@ def send_data_to_election_microservice(form_data):
     ######################## here we want to change to api gateway ##################
     token = session.get('token')
     print(token)
-    microservice_url = 'http://127.0.0.1:3000/create-election'
+    microservice_url = 'http://election_mgmt_service:5004/create-election'
 
     try:
         response = requests.post(microservice_url, json=form_data, headers={'Authorization': token})
@@ -98,7 +98,7 @@ def send_data_to_election_microservice(form_data):
 def my_elections():
     token = session.get('token')
     print(token)
-    microservice_url = f'http://127.0.0.1:3000/fetch-elections'
+    microservice_url = f'http://election_mgmt_service:5004/fetch-elections'
     try:
         response = make_request(microservice_url, token)
         elections = response.json()
@@ -116,7 +116,7 @@ def my_elections():
 @main.route('/download_voters/<int:election_id>')
 def download_voters(election_id):
     token = session.get('token')
-    microservice_url = f'http://127.0.0.1:3000/election_voters/{election_id}'
+    microservice_url = f'http://election_mgmt_service:5004/election_voters/{election_id}'
     response = make_request(microservice_url, token)    
     si = StringIO()
     cw = csv.writer(si)
@@ -163,10 +163,14 @@ def is_authenticated():
     print(token)
     if not token:
         return False
-    microservice_url = 'http://127.0.0.1:3001/'
+    microservice_url = 'http://admin_mgmt_service-service:3001/'
     # Pass the token in the request headers when making the request
-    response = make_request(microservice_url, token)
-    data = response.json()
-    is_authenticated = data['is_authenticated']
-    print('value', is_authenticated)
-    return is_authenticated
+    try:
+        response = make_request(microservice_url, token)
+        data = response.json()
+        is_authenticated = data['is_authenticated']
+        print('value', is_authenticated)
+        return is_authenticated
+    except requests.RequestException as e:
+        print(f"Error making request: {e}")
+        return None

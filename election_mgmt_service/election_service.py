@@ -43,6 +43,7 @@ def create_election():
     print("voter_file:", voter_file)
 
     new_election = add_election_data(creator_id, title, description, end_date)
+    print(new_election)
     question = add_question_data(question, new_election.id)
     add_options_data(options, question.id)
     add_voter_data(voter_file, new_election.id) # TO-DO: separate this into voter service...?
@@ -122,8 +123,7 @@ def add_election_data(creator_id, title, description, end_date):
         # Add the new election to the database session
         db.session.add(new_election)
         
-        db.session.flush()
-        # db.session.commit()
+        db.session.commit()
       
         print("Election data added successfully to the database")
         return new_election
@@ -143,8 +143,7 @@ def add_question_data(text, election_id):
         # Handling the question and options
         question = Question(text=text, election_id=election_id)
         db.session.add(question)
-        db.session.flush()
-        # db.session.commit()
+        db.session.commit()
         print("Question data added successfully to the database")
         return question
 
@@ -164,8 +163,7 @@ def add_options_data(options, question_id):
             if option_text:
                 option = Option(text=option_text, question_id=question_id)
                 db.session.add(option)
-                db.session.flush()
-            # db.session.commit()
+                db.session.commit()
         print("Option data added successfully to the database")
 
     except Exception as e:
@@ -181,7 +179,7 @@ def add_voter_data(voter_file, election_id):
             email, name = row.strip().split(',')
             voter = Voter(email=email, name=name, election_id=election_id)
             db.session.add(voter)
-            db.session.flush()
+            db.session.commit()
         print("Voter data added successfully to the database")
 
     except Exception as e:
