@@ -1,23 +1,21 @@
 from flask_login import login_user, login_required, logout_user
-from flask import Blueprint, render_template, redirect, url_for, request, flash
+from flask import Blueprint, render_template, redirect, url_for, request, flash, session
 import requests
-from .models import User
-from . import db
 
 auth = Blueprint('auth', __name__)
 
 @auth.route('/login')
 def login():
-    return render_template('login.html')
+    return render_template('login.html', is_authenticated = False)
 
 # API gaetway needed - to check data in microservice
 @auth.route('/login', methods=['POST'])
 def login_post():
-    remember = True if request.form.get('remember') else False
 
     data = {
         'email': request.form.get('email'),
-        'password': request.form.get('password')
+        'password': request.form.get('password'),
+        'remember': True if request.form.get('remember') else False
     }
 
     microservice_url = 'http://127.0.0.1:5003/authenticate'
@@ -31,8 +29,8 @@ def login_post():
         elif response.status_code == 200:
             # if the above check passes user gets redirected to profile
             user_info = response.json().get('user')
-            user = User(user_info)
-            login_user(user, remember=remember)
+            token = response.json().get('token')
+            session['token'] = token
             return redirect(url_for('main.profile'))       
         else:
             flash('An error occurred while processing your request.')
@@ -81,7 +79,16 @@ def signup_post():
 
 
 @auth.route('/logout')
-@login_required # can only access if logged in
 def logout():
-    logout_user()
-    return redirect(url_for('main.index'))
+    token = session.get('token')
+    microservice_url = 'http://127.0.0.1:5003/logout'
+
+    response = requests.get(microservice_url, headers={'Authorization': token})
+    if response.status_code == 200:
+        print("Logout successful")
+        session.pop('token', None)
+        return redirect(url_for('main.index'))
+
+    else:
+        print("Logout failed")
+        return redirect(url_for('main.index'))

@@ -1,4 +1,3 @@
-# from flask_login import UserMixin #where is this used?
 from . import db
 from sqlalchemy import DateTime
 from datetime import datetime

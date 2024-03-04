@@ -40,22 +40,22 @@
                             <a href="{{ url_for('main.index') }}" class="navbar-item">
                                 Home
                             </a>
-                            {% if current_user.is_authenticated %}
+                            {% if is_authenticated %}
                             <a href="{{ url_for('main.create_election') }}" class="navbar-item">
                                 Create Election
                             </a>
                             {% endif %}
-                            {% if current_user.is_authenticated %}
+                            {% if is_authenticated %}
                             <a href="{{ url_for('main.my_elections') }}" class="navbar-item">
                                 My Elections
                             </a>
                             {% endif %}
-                            {% if current_user.is_authenticated %}
+                            {% if is_authenticated %}
                             <a href="{{ url_for('main.profile') }}" class="navbar-item">
                                 Profile
                             </a>
                             {% endif %}
-                            {% if not current_user.is_authenticated %}
+                            {% if not is_authenticated %}
                             <a href="{{ url_for('auth.login') }}" class="navbar-item">
                                 Login
                             </a>
@@ -63,7 +63,7 @@
                                 Sign Up
                             </a>
                             {% endif %}
-                            {% if current_user.is_authenticated %}
+                            {% if is_authenticated %}
                             <a href="{{ url_for('auth.logout') }}" class="navbar-item">
                                 Logout
                             </a>

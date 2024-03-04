@@ -1,16 +1,116 @@
 from flask import Flask, request, jsonify
-from datetime import datetime
+from flask_cors import CORS  # Import CORS module
+import jwt
+from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import LoginManager, login_required, current_user, login_user, logout_user
 from .models import User
 from . import db
-from . import create_app
+import os
 
-app = create_app()
+app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes in your Flask app
+
+login_manager = LoginManager(app)
+
+app.config['SECRET_KEY'] = 'secret-key-goes-here'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=365)  # Set session lifetime to 1 year
+
+db.init_app(app)
+
+with app.app_context():
+    from .models import User
+    db.drop_all()
+    db.create_all()
+
+from .models import User
+
+@login_manager.user_loader
+def load_user(user_id):
+    # user_id is the primary key
+    return User.query.get(int(user_id))
 
 @app.route('/')
-def hello_microservice():
-    return "hello"
+def index():
+    token = request.headers.get('Authorization')
+    print(token)
+    if not token:
+        return jsonify({'error': 'Token is missing'}), 401
 
+    try:
+        # Decode the JWT token
+        payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+        is_authenticated = payload['is_authenticated']
+
+        # Return the user profile information
+        return jsonify({'is_authenticated': is_authenticated})
+    
+    except jwt.ExpiredSignatureError:
+        return jsonify({'error': 'Token has expired'}), 401
+    except jwt.InvalidTokenError:
+        return jsonify({'error': 'Invalid token'}), 401
+
+
+@app.route('/authenticate', methods=['POST'])
+def auth_user():
+    # Get data
+    data = request.json
+    email = data.get('email')
+    password = data.get('password')
+    remember = data.get('remember')
+
+    user = User.query.filter_by(email=email).first()
+
+    # check if user  exists
+    # take the  password hash it and compare it to the hashed password in the db
+    if not user or not check_password_hash(user.password, password):
+        print("invalid creds")
+        return jsonify({'error': 'Incorrect email or password'}), 401
+    
+    else:
+        print("authenticated")
+        login_user(user, remember=remember, duration=timedelta(days=365))
+        print(current_user.name)
+        print(current_user.is_authenticated)
+        token_payload = {
+            'user_id': user.id,
+            'is_authenticated': current_user.is_authenticated  # Include the authentication status in the payload
+        }
+        token = jwt.encode(token_payload, app.config['SECRET_KEY'], algorithm='HS256')
+        print(token)
+        response_data = {
+            'user': {'id': user.id, 'email': user.email, 'is_active': user.is_active, 'name': user.name},
+            'token': token
+        }
+        return jsonify(response_data), 200
+
+
+@app.route('/profile')
+#@login_required # only logged in user can see this
+def profile():
+    token = request.headers.get('Authorization')
+    print(token)
+    if not token:
+        return jsonify({'error': 'Token is missing'}), 401
+
+    try:
+        # Decode the JWT token
+        payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+        user_id = payload['user_id']
+
+        # Get the user details from the database
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+
+        # Return the user profile information
+        return jsonify({'name': user.name})
+
+    except jwt.ExpiredSignatureError:
+        return jsonify({'error': 'Token has expired'}), 401
+    except jwt.InvalidTokenError:
+        return jsonify({'error': 'Invalid token'}), 401
 
 @app.route('/signup', methods=['POST'])
 def add_user_info():
@@ -41,21 +141,11 @@ def add_user_info():
         db.session.rollback()
         print(f"Error adding user data to the database: {e}")
 
-
-@app.route('/authenticate', methods=['POST'])
-def auth_user():
-    # Get data
-    data = request.json
-    email = data.get('email')
-    password = data.get('password')
-
-    user = User.query.filter_by(email=email).first()
-    print(user.is_active)
-
-    # check if user  exists
-    # take the  password hash it and compare it to the hashed password in the db
-    if not user or not check_password_hash(user.password, password):
-        return jsonify({'error': 'Incorrect email or password'}), 401
-    
-    else:
-        return jsonify({'user': {'id': user.id, 'email': user.email, 'is_active': user.is_active}}), 200
+@app.route('/logout')
+def logout():
+    token = request.headers.get('Authorization')
+    print(token)
+    if not token:
+        return jsonify({'error': 'Token is missing'}), 401
+    logout_user()
+    return jsonify({'message': 'Logout successful'}), 200

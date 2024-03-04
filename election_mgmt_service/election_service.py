@@ -3,6 +3,7 @@ from datetime import datetime
 from .models import Election, Question, Option, Voter
 from . import db
 from . import create_app
+import jwt
 
 app = create_app()
 
@@ -13,9 +14,16 @@ def hello_microservice():
 # API gateway needed - to receive data from frontend
 @app.route('/create-election', methods=['POST'])
 def create_election():
+    token = request.headers.get('Authorization')
+    print(token)
+    if not token:
+        print("no token")
+        return jsonify({'error': 'Token is missing'}), 401
+    payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+    id = payload['user_id']
     # Get data
     data = request.json
-    creator_id = data.get('creator_id')
+    creator_id = id
     title = data.get('title')
     description = data.get('description')
     end_date_str = data.get('end_date')
@@ -42,12 +50,18 @@ def create_election():
     db.session.commit()
 
     # Return the received data in the response
-    return jsonify({'title': title})
+    return jsonify({'message': 'Election created successfully'}), 200
 
 
 # API gateway needed - to send data to frontend
-@app.route('/fetch-elections/<id>', methods=['GET'])
-def get_user_elections(id):
+@app.route('/fetch-elections/', methods=['GET'])
+def get_user_elections():
+    token = request.headers.get('Authorization')
+    print(token)
+    if not token:
+        return jsonify({'error': 'Token is missing'}), 401
+    payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+    id = payload['user_id']
     try:
         elections = Election.query.filter_by(creator_id=id).all()
         election_data = []
@@ -62,7 +76,7 @@ def get_user_elections(id):
             }
             election_data.append(election_info)
         print(election_data)
-        return jsonify(election_data)
+        return jsonify(election_data), 200
     
     except Exception as e:
         print(f"Error retrieving user elections: {e}")
@@ -70,11 +84,17 @@ def get_user_elections(id):
     
 
 # API gateway needed - to get data from frontend
-@app.route('/election_voters/<user_id>/<election_id>', methods=['GET'])
-def get_voters(user_id, election_id):
+@app.route('/election_voters/<election_id>', methods=['GET'])
+def get_voters(election_id):
+    token = request.headers.get('Authorization')
+    print('here', token)
+    if not token:
+        return jsonify({'error': 'Token is missing'}), 401
+    payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+    id = payload['user_id']
     election = Election.query.get_or_404(election_id)
 
-    if election.creator_id != int(user_id):
+    if election.creator_id != int(id):
         return jsonify({'error': 'Unauthorized'}), 403
     
     voters = []

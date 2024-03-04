@@ -27,6 +27,8 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: esortition_election_mgmt
+    ports:
+      - '5433:5432'
 
   election_mgmt_service-service:
     build: ./election_mgmt_service
@@ -41,6 +43,29 @@ services:
       - ./data:/data # Mount a volume to persist the SQLite database file. Shouldn't need this.
     depends_on:
       - election_mgmt_db
+
+  ################### ADMIN MANAGEMENT MICROSERVICE ##########################
+  admin_mgmt_db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: esortition_admin_mgmt
+    ports:
+      - '5434:5432'
+
+  admin_mgmt_service-service:
+    build: ./admin_mgmt_service
+    environment:
+      - FLASK_APP=/admin_mgmt_service-service/admin_service.py
+      - DATABASE_URL=postgresql://postgres:postgres@election_mgmt_db/esortition_admin_mgmt
+    ports:
+      - '3001:3001'
+    volumes:
+      - ./admin_mgmt_service:/admin_mgmt_service-service
+      - ./data:/data # Mount a volume to persist the SQLite database file. Shouldn't need this.
+    depends_on:
+      - admin_mgmt_db
 
   ############################## VOTING APP #####################################
   voting_app-app:
@@ -60,6 +85,8 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: esortition_voting
+    ports:
+      - '5435:5432'
 
   voting_manager-service:
     build: ./voting_manager
