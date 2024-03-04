@@ -7,6 +7,17 @@ services:
     ports:
       - "5001:5000"
   
+  election_mgmt_service-app:
+    build: ./election_mgmt_service
+    environment:
+      - FLASK_APP=/election_mgmt_service-app/election_service.py
+      - DATABASE_URL=sqlite:///db.sqlite
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./election_mgmt_service:/election_mgmt_service-app
+      - ./data:/data  # Mount a volume to persist the SQLite database file
+  
   microservice1-app:
     build: ./microservice1
     environment:
@@ -20,3 +31,10 @@ services:
       - FLASK_APP=/microservice2-app/micro_app.py
     ports:
       - "5003:5002"
+
+  # db:
+  #   image: postgres:latest
+  #   environment:
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: postgres
+  #     POSTGRES_DB: esortition_voting

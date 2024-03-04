@@ -7,6 +7,7 @@ from datetime import datetime
 from io import StringIO
 from .models import Election, Question, Option, Voter
 from .forms import ElectionForm, QuestionForm, OptionForm
+import requests
 
 from . import db
 
@@ -34,74 +35,93 @@ def create_election():
         form.question.options.append_entry()
 
     if form.validate_on_submit():
-        election = Election(title=form.title.data, description=form.description.data, end_date=form.end_date.data, creator=current_user)
-        db.session.add(election)
-        db.session.flush()
-        # db.session.commit()
-        
-        # Handling the question and options
-        question = Question(text=form.question.question_text.data, election_id=election.id)
-        db.session.add(question)
-        db.session.flush()
-        # db.session.commit()
+        end_date_str = form.end_date.data.strftime('%Y-%m-%d %H:%M:%S')
 
-        for option_form in form.question.options.entries:
-            if option_form.data['option']:  # Check if option text is provided
-                option = Option(text=option_form.data['option'], question_id=question.id)
-                db.session.add(option)
-                db.session.flush()
-        # db.session.commit()
-        
-        if form.voter_file.data:
-            csv_file = form.voter_file.data.stream.read().decode("utf-8")
-            csv_data = csv.reader(StringIO(csv_file), delimiter=',')
-            print(csv_data)
-            for row in csv_data:
-                print(row)
-                email = row[0]
-                name = row[1] if len(row) > 1 else ''
-                voter = Voter(email=email, name=name, election_id=election.id)
-                db.session.add(voter)
-                db.session.flush()
-            # db.session.commit()
-            flash('Election and voter information uploaded successfully!')
-        flash('Election created successfully!')
-        
-        db.session.commit()
+        form_data = {
+            'title': form.title.data,
+            'description': form.description.data,
+            'end_date': end_date_str,
+            'creator_id': current_user.id,
+            'question': form.question.question_text.data,
+            'options': [option_form.data['option'] for option_form in form.question.options.entries],
+            'voter_file': form.voter_file.data.stream.read().decode("utf-8") if form.voter_file.data else None
+        }
 
+        if send_data_to_election_microservice(form_data):
+            flash('Election created successfully!')
+            return redirect(url_for('main.my_elections'))
+        
+        else:
+            print(form.errors) #TO-DO - print the correct error
 
-        return redirect(url_for('main.my_elections'))
     else:
         print(form.errors)
     
     return render_template('create_election.html', form=form)
 
 
+# API gateway needed to send data to backend
+def send_data_to_election_microservice(form_data):
+    microservice_url = 'http://127.0.0.1:3000/create-election'
+
+    try:
+        response = requests.post(microservice_url, json=form_data)
+        # Check if the request was successful (status code 200)
+        if response.status_code == 200:
+            print("Data sent successfully to microservice!")
+            return True
+        else:
+            print(f"Failed to send data to microservice. Status code: {response.status_code}")
+            return False
+    except requests.RequestException as e:
+        # Handle any errors that occur during the request
+        print(f"Error sending data to microservice: {e}")
+        return False
+
+
+# API gateway needed to get data from backend
 @main.route('/my_elections')
 @login_required
 def my_elections():
-    elections = Election.query.filter_by(creator_id=current_user.id).all()
-    return render_template('my_elections.html', elections=elections)
+    microservice_url = f'http://127.0.0.1:3000/fetch-elections/{current_user.id}'
+    try:
+        response = requests.get(microservice_url)
+        elections = response.json()
+        if response.status_code == 200:
+            return render_template('my_elections.html', elections=elections)
+        else:
+            print(f"Failed to fetch user elections. Status code: {response.status_code}")
+            return []
+    except requests.RequestException as e:
+        print(f"Error fetching user elections: {e}")
+        return []
 
+
+# API gateway needed to get data from backend
 @main.route('/download_voters/<int:election_id>')
 @login_required
 def download_voters(election_id):
-    election = Election.query.get_or_404(election_id)
-    if election.creator_id != current_user.id:
-        return "Unauthorized", 403
+    microservice_url = f'http://127.0.0.1:3000/election_voters/{current_user.id}/{election_id}'
     
     si = StringIO()
     cw = csv.writer(si)
     # cw.writerow(['Email', 'Name'])
     
-    for voter in election.voters:
-        cw.writerow([voter.email, voter.name])
+    response = requests.get(microservice_url)
+    voters = response.json()
+    print(voters)
+    if response.status_code == 200:
+        for voter in voters:
+            cw.writerow([voter['email'], voter['name']])
     
-    output = si.getvalue()
-    si.close()
-    
-    return Response(
-        output,
-        mimetype="text/csv",
-        headers={"Content-disposition":
-                 "attachment; filename=voters_election.csv".format(election_id)})
+        output = si.getvalue()
+        si.close()
+        
+        return Response(
+            output,
+            mimetype="text/csv",
+            headers={"Content-disposition":
+                    "attachment; filename=voters_election.csv".format(election_id)})
+    else:
+        print(f"Failed to fetch voters. Status code: {response.status_code}")
+        return []
