@@ -58,7 +58,7 @@ services:
     build: ./admin_mgmt_service
     environment:
       - FLASK_APP=/admin_mgmt_service-service/admin_service.py
-      - DATABASE_URL=postgresql://postgres:postgres@election_mgmt_db/esortition_admin_mgmt
+      - ADMIN_DATABASE_URL=postgresql://postgres:postgres@admin_mgmt_db/esortition_admin_mgmt
     ports:
       - '3001:3001'
     volumes:

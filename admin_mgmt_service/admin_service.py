@@ -14,7 +14,7 @@ CORS(app)  # Enable CORS for all routes in your Flask app
 login_manager = LoginManager(app)
 
 app.config['SECRET_KEY'] = 'secret-key-goes-here'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('ADMIN_DATABASE_URL')
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=365)  # Set session lifetime to 1 year
 
 db.init_app(app)
