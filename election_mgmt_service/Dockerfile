@@ -6,7 +6,7 @@ COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 COPY . .
 
-ENV FLASK_APP=/election_mgmt_service-service/election_service.py
+# ENV FLASK_APP=/election_mgmt_service-service/election_service.py
 
 EXPOSE 5002
 

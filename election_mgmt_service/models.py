@@ -1,4 +1,4 @@
-from flask_login import UserMixin #where is this used?
+# from flask_login import UserMixin #where is this used?
 from . import db
 from sqlalchemy import DateTime
 from datetime import datetime
@@ -10,7 +10,7 @@ class Election(db.Model):
     title = db.Column(db.String(100))
     description = db.Column(db.String(1000))
     # start_date = db.Column(db.DateTime(timezone=True))
-    end_date = db.Column(db.DateTime(DateTime))
+    end_date = db.Column(db.DateTime(timezone=True), nullable=True)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     voters = db.relationship('Voter', backref='election', lazy='dynamic')
 
