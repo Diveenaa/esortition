@@ -23,7 +23,7 @@ def profile():
     print(token)
     if not token:
         return redirect(url_for('auth.login'))  # Redirect to login if token is not found
-    microservice_url = 'http://admin_mgmt_service-service:3001/profile'
+    microservice_url = 'http://admin_mgmt_service-service:5004/profile'
     # Pass the token in the request headers when making the request
     response = make_request(microservice_url, token)
     if response and response.status_code == 200:
@@ -76,7 +76,7 @@ def send_data_to_election_microservice(form_data):
     ######################## here we want to change to api gateway ##################
     token = session.get('token')
     print(token)
-    microservice_url = 'http://election_mgmt_service-service:5002/create-election'
+    microservice_url = 'http://election_mgmt_service-service:5003/create-election'
 
     try:
         response = requests.post(microservice_url, json=form_data, headers={'Authorization': token})
@@ -98,7 +98,7 @@ def send_data_to_election_microservice(form_data):
 def my_elections():
     token = session.get('token')
     print(token)
-    microservice_url = f'http://election_mgmt_service-service:5002/fetch-elections'
+    microservice_url = f'http://election_mgmt_service-service:5003/fetch-elections'
     try:
         response = make_request(microservice_url, token)
         print(response.content)
@@ -117,7 +117,7 @@ def my_elections():
 @main.route('/download_voters/<int:election_id>')
 def download_voters(election_id):
     token = session.get('token')
-    microservice_url = f'http://election_mgmt_service-service:5002/election_voters/{election_id}'
+    microservice_url = f'http://election_mgmt_service-service:5003/election_voters/{election_id}'
     response = make_request(microservice_url, token)    
     si = StringIO()
     cw = csv.writer(si)
@@ -164,7 +164,7 @@ def is_authenticated():
     print(token)
     if not token:
         return False
-    microservice_url = 'http://admin_mgmt_service-service:3001/'
+    microservice_url = 'http://admin_mgmt_service-service:5004/'
     # Pass the token in the request headers when making the request
     try:
         response = make_request(microservice_url, token)

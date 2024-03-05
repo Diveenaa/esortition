@@ -1,6 +1,8 @@
+from . import create_app
 from flask import Flask, request, jsonify
 from flask_cors import CORS  # Import CORS module
 import jwt
+from flask_migrate import Migrate
 from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_required, current_user, login_user, logout_user
@@ -8,8 +10,9 @@ from .models import User
 from . import db
 import os
 
-app = Flask(__name__)
+app = create_app()
 CORS(app)  # Enable CORS for all routes in your Flask app
+migrate = Migrate(app, db)
 
 login_manager = LoginManager(app)
 
@@ -17,14 +20,13 @@ app.config['SECRET_KEY'] = 'secret-key-goes-here'
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('ADMIN_DATABASE_URL')
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=365)  # Set session lifetime to 1 year
 
-db.init_app(app)
+# db.init_app(app)
 
-with app.app_context():
-    from .models import User
-    db.drop_all()
-    db.create_all()
+# with app.app_context():
+#     from models import User
+#     db.drop_all()
+#     db.create_all()
 
-from .models import User
 
 @login_manager.user_loader
 def load_user(user_id):

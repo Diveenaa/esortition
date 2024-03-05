@@ -63,7 +63,7 @@ services:
       - '5004:5004'
     volumes:
       - ./admin_mgmt_service:/admin_mgmt_service-service
-      - ./data:/data # Mount a volume to persist the SQLite database file. Shouldn't need this.
+      # - ./data:/data # Mount a volume to persist the SQLite database file. Shouldn't need this.
     depends_on:
       - admin_mgmt_db
 
