@@ -1,0 +1,87 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run flake8
+        run: flake8 app.py
+
+      - name: Run unit tests
+        run: pytest test.py
+
+  deploy:
+    name: Deploy to Container Registry
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      #   - name: Configure AWS credentials
+      #     uses: aws-actions/configure-aws-credentials@v2
+      #     with:
+      #       aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #       aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #       aws-region: eu-west-2
+
+      #   - name: Login to Amazon ECR
+      #     id: login-ecr
+      #     uses: aws-actions/amazon-ecr-login@v1
+
+      # TODO:
+      # Log into GitHub Container Registry
+      # Log into GitHub Container Registry
+      - name: Log into GHCR
+        run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
+
+      - name: Build, tag, and push main container image
+        id: build-main-image
+        run: |
+          docker build -t esortition:latest .
+          docker tag esortition:latest ghcr.io/${{ secrets.GHCR_USERNAME }}/esortition:latest
+          docker push ghcr.io/${{ secrets.GHCR_USERNAME }}/esortition:latest
+
+      - name: Build, tag, and push voting_app container image
+        id: build-voting_app-image
+        run: |
+          docker build -t voting_app:latest voting_app
+          docker tag voting_app:latest ghcr.io/${{ secrets.GHCR_USERNAME }}/voting_app:latest
+          docker push ghcr.io/${{ secrets.GHCR_USERNAME }}/voting_app:latest
+
+      - name: Build, tag, and push voting_manager container image
+        id: build-voting_manager-image
+        run: |
+          docker build -t voting_manager:latest voting_manager
+          docker tag voting_manager:latest ghcr.io/${{ secrets.GHCR_USERNAME }}/voting_manager:latest
+          docker push ghcr.io/${{ secrets.GHCR_USERNAME }}/voting_manager:latest
+
+    #   - name: Build, tag, and push main container image
+    #     id: build-image
+    #     run: |
+    #       docker build -t esortition:latest .
+    #       docker tag esortition:latest ${{ steps.login-ecr.outputs.registry }}/esortition:latest
+    #       docker push ${{ steps.login-ecr.outputs.registry }}/esortition:latest
+
+    #   - name: Deploy to Amazon ECS
+    #     run: |
+    #       aws ecs update-service --cluster <your-cluster-name> --service <your-service-name> --force-new-deployment
