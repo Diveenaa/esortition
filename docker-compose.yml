@@ -33,7 +33,7 @@ services:
   election_mgmt_service-service:
     build: ./election_mgmt_service
     environment:
-      - FLASK_APP=/election_mgmt_service-service/myapp
+      - FLASK_APP=/election_mgmt_service-service/myapp/election_service.py
       # - DATABASE_URL=sqlite:///db.sqlite
       - DATABASE_URL=postgresql://postgres:postgres@election_mgmt_db/esortition_election_mgmt
     ports:
@@ -57,7 +57,7 @@ services:
   admin_mgmt_service-service:
     build: ./admin_mgmt_service
     environment:
-      - FLASK_APP=/admin_mgmt_service-service/admin_service.py
+      - FLASK_APP=/admin_mgmt_service-service/myapp/admin_service.py
       - ADMIN_DATABASE_URL=postgresql://postgres:postgres@admin_mgmt_db/esortition_admin_mgmt
     ports:
       - '5004:5004'
