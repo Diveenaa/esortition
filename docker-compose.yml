@@ -12,6 +12,8 @@ services:
 
   ################################### ADMIN PORTAL ###############################
   admin_portal-app:
+    image: esortitiondeployment.azurecr.io/admin-portal-app
+    container_name: admin-portal-app
     build: ./admin_portal
     # environment:
     #   - /admin_portal-app/app/main.py #not actaully sure what this is doing?
@@ -23,6 +25,8 @@ services:
 
   ################### ELECTION MANAGEMENT MICROSERVICE ###########################
   election_mgmt_service-service:
+    image: esortitiondeployment.azurecr.io/election-mgmt-service-service
+    container_name: election-mgmt-service-service
     build: ./election_mgmt_service
     # environment:
     #   - FLASK_APP=/election_mgmt_service-service/myapp/election_service.py
@@ -38,6 +42,8 @@ services:
 
   ################### ADMIN MANAGEMENT MICROSERVICE ##############################
   admin_mgmt_service-service:
+    image: esortitiondeployment.azurecr.io/admin-mgmt-service-service
+    container_name: admin-mgmt-service-service
     build: ./admin_mgmt_service
     # environment:
     #   - FLASK_APP=/admin_mgmt_service-service/myapp/admin_service.py
@@ -52,6 +58,8 @@ services:
 
   ############################## VOTING APP ######################################
   voting_app-app:
+    image: esortitiondeployment.azurecr.io/voting-app-app
+    container_name: voting-app-app
     build: ./voting_app
     # environment:
     #   - FLASK_APP=/voting_app-app/voting_app.py
@@ -64,6 +72,8 @@ services:
 
   ########################### VOTING MICROSERVICE ################################
   voting_manager-service:
+    image: esortitiondeployment.azurecr.io/voting-manager-service
+    container_name: voting-manager-service
     build: ./voting_manager
     # environment:
     #   - DATABASE_URL=postgresql://postgres:postgres@voting_db/esortition_voting
