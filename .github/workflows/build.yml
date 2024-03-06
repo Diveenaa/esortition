@@ -19,6 +19,9 @@ jobs:
         with:
           python-version: 3.9
       
+      - name: Install dev-equirements
+        run: pip install -r dev-requirements.txt
+
       - name: Iterate over directories and test
         run: |
           for dir in */; do
