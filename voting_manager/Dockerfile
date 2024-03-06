@@ -1,6 +1,6 @@
 FROM python
 
-WORKDIR /voting_manager-service
+WORKDIR /voting_manager-service/myapp
 
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt

@@ -12,4 +12,4 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 db.init_app(app)
 migrate = Migrate(app, db)  # Initialize Flask-Migrate
 
-from myapp import models
+from myapp import models, voting_manager_service

@@ -5,13 +5,14 @@ from .models import Vote
 
 @app.route('/votes', methods=['POST'])
 def create_vote():
-    vote_data = request.json  # Get data from request body
-    vote = Vote(**vote_data)  # Create a Vote instance with the provided data
-    db.session.add(vote)  # Add the new vote to the session
-    db.session.commit()  # Commit the session to save changes to the database
-    return jsonify({'message': 'vote created successfully'}), 200  # Return the created vote as JSON with a 201 status code
+    data = request.get_json()
+    vote = Vote(voter_id=data['voter_id'], question=data['question'],
+                option=data['option'], election_id=data['election_id'])
+    db.session.add(vote)
+    db.session.commit()
+    return jsonify(vote.id), 201 
 
-@app.route('/votes', methods=['GET'])
+@app.route('/voters', methods=['GET'])
 def read_votes():
     try:
         votes_query = Vote.query.all()  # Attempt to query all votes from the database

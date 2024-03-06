@@ -31,7 +31,7 @@ def vote():
             return render_template('voting.html', error_message=error_message)
         
     # Fetch voter information from the voting_manager microservice
-    response = requests.get(VOTE_MANAGER_API + "votes/")
+    response = requests.get(VOTE_MANAGER_API + "votes")
     if response.status_code == 200:
         voters = response.json()  # Assuming the response is JSON containing voter data
     else:
