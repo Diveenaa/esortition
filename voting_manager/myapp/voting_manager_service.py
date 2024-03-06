@@ -1,25 +1,29 @@
-from fastapi import FastAPI, Depends, status
-from sqlmodel import SQLModel, Field, Session, select, create_engine
+from flask import Flask, request
+from . import db, app
+from .models import Vote
+
+# from fastapi import FastAPI, Depends, status
+# from sqlmodel import SQLModel, Field, Session, select, create_engine
+
 from typing import List
 # from flask import Flask
-import os
 
-class Vote(SQLModel, table=True):
-    id: int | None = Field(default=None, primary_key=True)
-    username: str
-    age: int
+# class Vote(SQLModel, table=True):
+#     id: int | None = Field(default=None, primary_key=True)
+#     username: str
+#     age: int
     # item_id: str  # Identifier for the item being voted on
     # timestamp: datetime = Field(default_factory=datetime.utcnow)
 
-app = FastAPI()
+# app = FastAPI()
 
-DATABASE_URL = os.getenv("DATABASE_URL")
-engine = create_engine(DATABASE_URL)
+# DATABASE_URL = os.getenv("DATABASE_URL")
+# engine = create_engine(DATABASE_URL)
 
 
-def get_session():
-    with Session(engine) as session:
-        yield session
+# def get_session():
+#     with Session(engine) as session:
+#         yield session
 
 
 # def create_db_and_tables():
