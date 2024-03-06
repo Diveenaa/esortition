@@ -22,13 +22,15 @@ def get_session():
         yield session
 
 
-def create_db_and_tables():
-    SQLModel.metadata.create_all(engine)
+# def create_db_and_tables():
+#     SQLModel.metadata.create_all(engine)
 
 
-@app.on_event("startup")
-def on_startup():
-    create_db_and_tables()
+# @app.on_event("startup")
+# def on_startup():
+#     create_db_and_tables()
+# 
+#   REMOVING ABOVE AND RELYING ON ALEMBIC COMMAND 
 
 
 @app.post("/votes/", status_code=status.HTTP_201_CREATED, response_model=Vote)
