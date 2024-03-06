@@ -5,24 +5,25 @@ SSE group CW2
     ```bash
     docker-compose up
     ```
-
-2. Initialize Flask-Migrate:
+2. Apply the migration to create database tables:
 
     ```bash
-    docker-compose exec election_mgmt_service-service flask db init
-    docker-compose exec admin_mgmt_service-service flask db init
-    ```
+    docker-compose exec election_mgmt_service-service flask db upgrade
+    docker-compose exec admin_mgmt_service-service flask db upgrade
+     ```
+
+
+
+
+
+
+
+
+
 
 2. Generate a migration script:
 
     ```bash
     docker-compose exec election_mgmt_service-service flask db migrate -m "Initial migration"
     docker-compose exec admin_mgmt_service-service flask db migrate -m "Initial migration"
-    ```
-
-3. Apply the migration to create database tables:
-
-    ```bash
-    docker-compose exec election_mgmt_service-service flask db upgrade
-    docker-compose exec admin_mgmt_service-service flask db upgrade
     ```
