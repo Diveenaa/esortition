@@ -21,7 +21,7 @@ SSE group CW2
 
 
 
-2. Generate a migration script:
+    IF YOU MAKE DB CHANGES:
 
     ```bash
     docker-compose exec election_mgmt_service-service flask db migrate -m "Initial migration"
