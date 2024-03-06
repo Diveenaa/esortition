@@ -1,0 +1,104 @@
+version: '3.8'
+services:
+  ############################## API GATEWAY #####################################
+  nginx-api-gateway:
+    image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - '80:80'
+    depends_on:
+      - voting_manager-service
+
+  ################################### ADMIN PORTAL ###############################
+  admin_portal-app:
+    build: ./admin_portal
+    environment:
+      - /admin_portal-app/app/main.py #not actaully sure what this is doing?
+      - API_GATEWAY_URL=http://nginx-api-gateway/
+    ports:
+      - '5001:5001'
+    volumes:
+      - ./admin_portal:/admin_portal-app
+
+  ################### ELECTION MANAGEMENT MICROSERVICE ###########################
+  election_mgmt_db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: esortition_election_mgmt
+    # ports:
+    #   - '5433:5433'
+
+  election_mgmt_service-service:
+    build: ./election_mgmt_service
+    environment:
+      - FLASK_APP=/election_mgmt_service-service/myapp/election_service.py
+      # - DATABASE_URL=sqlite:///db.sqlite
+      - DATABASE_URL=postgresql://postgres:postgres@election_mgmt_db/esortition_election_mgmt
+    ports:
+      - '5003:5003'
+    volumes:
+      - ./election_mgmt_service:/election_mgmt_service-service
+      - ./data:/data # Mount a volume to persist the SQLite database file. Shouldn't need this.
+    depends_on:
+      - election_mgmt_db
+
+  ################### ADMIN MANAGEMENT MICROSERVICE ##############################
+  admin_mgmt_db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: esortition_admin_mgmt
+    # ports:
+    #   - '5434:5434'
+
+  admin_mgmt_service-service:
+    build: ./admin_mgmt_service
+    environment:
+      - FLASK_APP=/admin_mgmt_service-service/myapp/admin_service.py
+      - ADMIN_DATABASE_URL=postgresql://postgres:postgres@admin_mgmt_db/esortition_admin_mgmt
+    ports:
+      - '5004:5004'
+    volumes:
+      - ./admin_mgmt_service:/admin_mgmt_service-service
+      # - ./data:/data # Mount a volume to persist the SQLite database file. Shouldn't need this.
+    depends_on:
+      - admin_mgmt_db
+
+  ############################## VOTING APP ######################################
+  voting_app-app:
+    build: ./voting_app
+    environment:
+      - FLASK_APP=/voting_app-app/voting_app.py
+      - API_GATEWAY_URL=http://nginx-api-gateway/
+      # - DATABASE_URL=postgresql://postgres:postgres@db/esortition_voting
+    ports:
+      - '5002:5002'
+    volumes:
+      - ./voting_app:/voting_app-app
+
+  ########################### VOTING MICROSERVICE ################################
+  voting_db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: esortition_voting
+    # ports:
+    #   - '5435:5435'
+
+  voting_manager-service:
+    build: ./voting_manager
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@voting_db/esortition_voting
+      - FASTAPI_APP=/voting_manager-service/voting_manager_service.py
+      # - FLASK_APP=/voting_manager-app/voting_manager_service.py
+    ports:
+      - '5005:5005'
+    volumes:
+      - ./voting_manager:/voting_manager-service
+    depends_on:
+      - voting_db

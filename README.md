@@ -1,6 +1,8 @@
 # esortition
 SSE group CW2
 
+# need to make distinctions with dev.docker-compose.yml
+
 1.  Run the application
     ```bash
     docker-compose up
