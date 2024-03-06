@@ -18,15 +18,18 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: 3.9
-
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: Run flake8
-        run: flake8 app.py
-
-      - name: Run unit tests
-        run: pytest test.py
+      
+      - name: Iterate over directories and test
+        run: |
+          for dir in */; do
+            if [ "$dir" != ".github/" ] && [ "$dir" != "data/" ]; then
+              cd "$dir"
+              pip install -r requirements.txt
+              flake8 app.py
+              pytest test.py
+              cd ..
+            fi
+          done
 
   deploy:
     name: Deploy to Github Container Registry
