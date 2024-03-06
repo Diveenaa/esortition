@@ -91,11 +91,15 @@ services:
     #   - '5435:5435'
 
   voting_manager-service:
-    build: ./voting_manager
+    build: 
+      context: ./voting_manager
+      dockerfile: dev.Dockerfile
+    expose:
+      - 5005
+    command: uvicorn voting_manager_service:app --reload --host=0.0.0.0 --port=5005
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@voting_db/esortition_voting
       - FASTAPI_APP=/voting_manager-service/voting_manager_service.py
-      # - FLASK_APP=/voting_manager-app/voting_manager_service.py
     ports:
       - '5005:5005'
     volumes:

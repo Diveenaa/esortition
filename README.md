@@ -5,7 +5,7 @@ SSE group CW2
 
 1.  Run the application
     ```bash
-    docker-compose up
+    docker-compose -f dev.docker-compose.yml up
     ```
 2. Apply the migration to create database tables:
 
