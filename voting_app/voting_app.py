@@ -1,11 +1,12 @@
 from flask import Flask, request, render_template, redirect, url_for
 import requests
-
+import os
 
 app = Flask(__name__)
 
 
-API_GATEWAY_URL = "http://nginx-api-gateway/voting/"
+API_GATEWAY_URL = os.getenv("API_GATEWAY_URL")
+VOTE_MANAGER_API = API_GATEWAY_URL + "voting/"
 
 @app.route('/', methods=['GET', 'POST'])
 def vote():
@@ -19,7 +20,7 @@ def vote():
         }
         
         # Submit the vote to the microservice via the API gateway
-        response = requests.post(API_GATEWAY_URL + "votes/", json=vote_data)
+        response = requests.post(VOTE_MANAGER_API + "votes/", json=vote_data)
         if response.status_code == 201:  # Assuming 201 Created response on successful vote submission
             # Redirect to a success page or back to voting page with a success message
             return redirect(url_for('vote_success'))
@@ -30,7 +31,7 @@ def vote():
             return render_template('voting.html', error_message=error_message)
         
     # Fetch voter information from the voting_manager microservice
-    response = requests.get(API_GATEWAY_URL + "votes/")
+    response = requests.get(VOTE_MANAGER_API + "votes/")
     if response.status_code == 200:
         voters = response.json()  # Assuming the response is JSON containing voter data
     else:

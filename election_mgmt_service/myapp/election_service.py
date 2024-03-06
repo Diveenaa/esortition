@@ -55,7 +55,7 @@ def create_election():
 
 
 # API gateway needed - to send data to frontend
-@app.route('/fetch-elections/', methods=['GET'])
+@app.route('/fetch-elections', methods=['GET'])
 def get_user_elections():
     token = request.headers.get('Authorization')
     print(token)

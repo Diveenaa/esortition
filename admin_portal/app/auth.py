@@ -1,8 +1,10 @@
 from flask_login import login_user, login_required, logout_user
 from flask import Blueprint, render_template, redirect, url_for, request, flash, session
 import requests
+from . import ADMIN_MGMT_API_GATEWAY_URL
 
 auth = Blueprint('auth', __name__)
+
 
 @auth.route('/login')
 def login():
@@ -18,7 +20,7 @@ def login_post():
         'remember': True if request.form.get('remember') else False
     }
 
-    microservice_url = 'http://admin_mgmt_service-service:5004/authenticate'
+    microservice_url = ADMIN_MGMT_API_GATEWAY_URL + 'authenticate'
 
     try:
         response = requests.post(microservice_url, json=data)
@@ -56,7 +58,7 @@ def signup_post():
             'password': request.form.get('password')
         }
     
-    microservice_url = 'http://admin_mgmt_service-service:5004/signup'
+    microservice_url = ADMIN_MGMT_API_GATEWAY_URL + 'signup'
 
     try:
         response = requests.post(microservice_url, json=data)
@@ -81,7 +83,8 @@ def signup_post():
 @auth.route('/logout')
 def logout():
     token = session.get('token')
-    microservice_url = 'http://admin_mgmt_service-service:5004/logout'
+    
+    microservice_url = ADMIN_MGMT_API_GATEWAY_URL + 'logout'
 
     response = requests.get(microservice_url, headers={'Authorization': token})
     if response.status_code == 200:

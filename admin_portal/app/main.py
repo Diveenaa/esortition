@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, url_for, session, request
+from flask import Blueprint, render_template, url_for, session, request, make_response
 from flask_login import login_required, current_user
 
 from flask import flash, redirect, Response
@@ -7,8 +7,13 @@ from datetime import datetime
 from io import StringIO
 from .forms import ElectionForm, QuestionForm, OptionForm
 import requests
+from . import ADMIN_MGMT_API_GATEWAY_URL, ELECTION_MGMT_API_GATEWAY_URL
+
+
 
 main = Blueprint('main', __name__)
+
+
 
 @main.route('/')
 def index():
@@ -23,7 +28,8 @@ def profile():
     print(token)
     if not token:
         return redirect(url_for('auth.login'))  # Redirect to login if token is not found
-    microservice_url = 'http://admin_mgmt_service-service:5004/profile'
+    
+    microservice_url = f'{ADMIN_MGMT_API_GATEWAY_URL}profile'
     # Pass the token in the request headers when making the request
     response = make_request(microservice_url, token)
     if response and response.status_code == 200:
@@ -76,7 +82,8 @@ def send_data_to_election_microservice(form_data):
     ######################## here we want to change to api gateway ##################
     token = session.get('token')
     print(token)
-    microservice_url = 'http://election_mgmt_service-service:5003/create-election'
+    
+    microservice_url = f'{ELECTION_MGMT_API_GATEWAY_URL}create-election'
 
     try:
         response = requests.post(microservice_url, json=form_data, headers={'Authorization': token})
@@ -98,26 +105,36 @@ def send_data_to_election_microservice(form_data):
 def my_elections():
     token = session.get('token')
     print(token)
-    microservice_url = f'http://election_mgmt_service-service:5003/fetch-elections'
+    
+    microservice_url = f'{ELECTION_MGMT_API_GATEWAY_URL}fetch-elections'
+    
     try:
         response = make_request(microservice_url, token)
-        print(response.content)
-        elections = response.json()
-        if response.status_code == 200:
+        
+        # Check if the response object is not None and status code is 200
+        if response and response.status_code == 200:
+            print(response.content)
+            elections = response.json()
             return render_template('my_elections.html', elections=elections, is_authenticated=True)
         else:
-            print(f"Failed to fetch user elections. Status code: {response.status_code}")
-            return 500
+            # Log detailed error information
+            if response:
+                print(f"Failed to fetch user elections. Status code: {response.status_code}, Content: {response.content}")
+            else:
+                print("Failed to fetch user elections. No response received.")
+            return make_response("Error fetching user elections", 500)
     except requests.RequestException as e:
         print(f"Error fetching user elections: {e}")
-        return 500
+        return make_response("Error fetching user elections", 500)
 
 
 # API gateway needed to get data from backend
 @main.route('/download_voters/<int:election_id>')
 def download_voters(election_id):
     token = session.get('token')
-    microservice_url = f'http://election_mgmt_service-service:5003/election_voters/{election_id}'
+
+    microservice_url = f'{ELECTION_MGMT_API_GATEWAY_URL}election_voters/{election_id}'
+
     response = make_request(microservice_url, token)    
     si = StringIO()
     cw = csv.writer(si)
@@ -164,7 +181,8 @@ def is_authenticated():
     print(token)
     if not token:
         return False
-    microservice_url = 'http://admin_mgmt_service-service:5004/'
+    
+    microservice_url = ADMIN_MGMT_API_GATEWAY_URL
     # Pass the token in the request headers when making the request
     try:
         response = make_request(microservice_url, token)
