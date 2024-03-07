@@ -8,4 +8,6 @@ COPY . .
 
 EXPOSE 5001
 
+ENV FLASK_APP=/admin_portal-app/app:app
+
 CMD [ "python3", "-m" , "flask", "run", "--port=5001", "--host=0.0.0.0"]

@@ -50,7 +50,7 @@ jobs:
   
       - name: Build and push Docker images to container registry
         run: |
-          docker-compose -f ghcr-docker-compose.yml build
+          docker-compose -f ghcr-docker-compose.yml build --no-cache
           docker-compose -f ghcr-docker-compose.yml push
 
       # - name: Iterate over directories and build/push images
