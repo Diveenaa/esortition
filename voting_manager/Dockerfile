@@ -8,4 +8,6 @@ COPY . .
 
 EXPOSE 5005
 
+ENV FLASK_APP=/voting_manager-service/myapp:app
+
 CMD [ "python3", "-m" , "flask", "run", "--port=5005", "--host=0.0.0.0"]
