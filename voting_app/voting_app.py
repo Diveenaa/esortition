@@ -85,15 +85,38 @@ def vote():
         election_details = response.json()
         question = election_details['question']
         options = election_details['options']
-
+        print(f"Election details: {election_details}")
+        print(f"Election response: {response}")
         VoteForm = create_vote_form(options)
         form = VoteForm
 
         if form.validate_on_submit():
-            # Process the form submission here (e.g., record the vote)
-            pass
+            selected_option = request.form['choice']
+            
+            # voter_id = election_details.get('voter_id')
+            question_id = election_details['question']['id']
+            selected_option_id = selected_option
+            # election_id = election_details.get('election_id')
 
-        return render_template('vote_form.html', form=form, question=question, election_id=election_id)
+            vote_data = {
+                'voter_id': voter_id,
+                'question': question_id,
+                'option': selected_option_id,
+                'election_id': election_id
+            }
+            print(f"Vote Data: {vote_data}")
+            
+            vote_response = requests.post(f'{VOTE_MANAGER_API}/votes', json=vote_data, headers={'Authorization': f'Bearer {token}'})
+            
+            if vote_response.status_code == 201:
+                return render_template('vote_outcome.html', outcome='success')
+            elif vote_response.status_code == 409:
+                return render_template('vote_outcome.html', outcome='already_voted')
+            else:
+                # Handle other errors
+                return render_template('vote_outcome.html', outcome='error', error_message=vote_response.json().get('error'))
+
+        return render_template('vote_form.html', form=form, question=question['text'], election_id=election_id)
     else:
         # Handle errors
         return jsonify({'error': 'Failed to load election details'}), response.status_code

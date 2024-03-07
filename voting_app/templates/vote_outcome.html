@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container" style="max-width: 600px; margin: 0 auto;">
+    <section class="section">
+        <div class="box">
+            <h1 class="title has-text-centered has-text-dark" style="margin-bottom: 1.5rem;">
+                {% if outcome == 'success' %}
+                    Thank You for Voting!
+                {% elif outcome == 'already_voted' %}
+                    Already Voted!
+                {% else %}
+                    Voting Failed
+                {% endif %}
+            </h1>
+            <p class="has-text-centered has-text-dark">
+                {% if outcome == 'success' %}
+                    Your vote has been successfully recorded.
+                {% elif outcome == 'already_voted' %}
+                    You have already cast your vote for this question.
+                {% else %}
+                    {{ error_message|default("There was an issue recording your vote.") }}
+                {% endif %}
+            </p>
+        </div>
+    </section>
+</div>
+{% endblock %}
