@@ -9,7 +9,7 @@ import os
 # ELECTION_MGMT_API_GATEWAY_URL = API_GATEWAY_URL + "election_mgmt_service/"
 
 ADMIN_MGMT_API_GATEWAY_URL = "https://lobster-app-5oxos.ondigitalocean.app/admin-mgmt-service-image/"
-ELECTION_MGMT_API_GATEWAY_URL = "http://election_mgmt_service/"
+ELECTION_MGMT_API_GATEWAY_URL = "https://lobster-app-5oxos.ondigitalocean.app/election-mgmt-service-image/"
 
 app = Flask(__name__)
 
