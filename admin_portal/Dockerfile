@@ -7,7 +7,7 @@ RUN pip install -r requirements.txt
 COPY . .
 
 # ENV FLASK_APP=/admin_portal-app/app.py
-ENV FLASK_ENV=development
+# ENV FLASK_ENV=development
 
 EXPOSE 5001
 
