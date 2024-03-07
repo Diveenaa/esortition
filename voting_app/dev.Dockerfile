@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 python:3.8-slim-buster as build
+FROM python
 
 WORKDIR /voting_app-app
 
@@ -8,7 +8,3 @@ COPY . .
 
 ENV FLASK_APP=/voting_app-app/voting_app.py
 ENV FLASK_ENV=development
-
-EXPOSE 5002
-
-CMD [ "python3", "-m" , "flask", "run", "--port=5002", "--host=0.0.0.0"]

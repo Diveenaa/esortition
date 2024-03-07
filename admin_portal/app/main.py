@@ -9,11 +9,7 @@ from .forms import ElectionForm, QuestionForm, OptionForm
 import requests
 from . import ADMIN_MGMT_API_GATEWAY_URL, ELECTION_MGMT_API_GATEWAY_URL
 
-
-
 main = Blueprint('main', __name__)
-
-
 
 @main.route('/')
 def index():

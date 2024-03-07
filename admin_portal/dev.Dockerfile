@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 python:3.8-slim-buster as build
+FROM python
 
 WORKDIR /admin_portal-app
 
@@ -8,7 +8,3 @@ COPY . .
 
 # ENV FLASK_APP=/admin_portal-app/app.py
 ENV FLASK_ENV=development
-
-EXPOSE 5001
-
-CMD [ "python3", "-m" , "flask", "run", "--port=5001", "--host=0.0.0.0"]

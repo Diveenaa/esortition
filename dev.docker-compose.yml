@@ -12,7 +12,12 @@ services:
 
   ################################### ADMIN PORTAL ###############################
   admin_portal-app:
-    build: ./admin_portal
+    build: 
+      context: ./admin_portal
+      dockerfile: dev.Dockerfile
+    expose:
+      - 5001
+    command: python3 -m flask run --reload --port=5001 --host=0.0.0.0
     environment:
       - /admin_portal-app/app/main.py #not actaully sure what this is doing?
       - API_GATEWAY_URL=http://nginx-api-gateway/
@@ -32,7 +37,12 @@ services:
     #   - '5433:5433'
 
   election_mgmt_service-service:
-    build: ./election_mgmt_service
+    build: 
+      context: ./election_mgmt_service
+      dockerfile: dev.Dockerfile
+    expose:
+      - 5003
+    command: python3 -m flask run --reload --port=5003 --host=0.0.0.0
     environment:
       - FLASK_APP=/election_mgmt_service-service/myapp/election_service.py
       # - DATABASE_URL=sqlite:///db.sqlite
@@ -56,7 +66,12 @@ services:
     #   - '5434:5434'
 
   admin_mgmt_service-service:
-    build: ./admin_mgmt_service
+    build: 
+      context: ./admin_mgmt_service
+      dockerfile: dev.Dockerfile
+    expose:
+      - 5004
+    command: python3 -m flask run --reload --port=5004 --host=0.0.0.0
     environment:
       - FLASK_APP=/admin_mgmt_service-service/myapp/admin_service.py
       - ADMIN_DATABASE_URL=postgresql://postgres:postgres@admin_mgmt_db/esortition_admin_mgmt
@@ -70,7 +85,12 @@ services:
 
   ############################## VOTING APP ######################################
   voting_app-app:
-    build: ./voting_app
+    build: 
+      context: ./voting_app
+      dockerfile: dev.Dockerfile
+    expose:
+      - 5002
+    command: python3 -m flask run --reload --port=5002 --host=0.0.0.0
     environment:
       - FLASK_APP=/voting_app-app/voting_app.py
       - API_GATEWAY_URL=http://nginx-api-gateway/

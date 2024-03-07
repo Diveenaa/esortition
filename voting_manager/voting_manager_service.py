@@ -5,7 +5,8 @@ from typing import List
 import os
 
 class Vote(SQLModel, table=True):
-    id: int | None = Field(default=None, primary_key=True)
+    id: int = Field(primary_key=True)
+    # id: int | None = Field(default=None, primary_key=True)
     username: str
     age: int
     # item_id: str  # Identifier for the item being voted on
