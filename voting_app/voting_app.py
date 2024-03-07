@@ -15,8 +15,8 @@ serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
 # ELECTION_MGMT_API_GATEWAY_URL = API_GATEWAY_URL + "election_mgmt_service/"
 
 # API_GATEWAY_URL = os.getenv("API_GATEWAY_URL")
-VOTE_MANAGER_API = "https://lobster-app-5oxos.ondigitalocean.app/voting/"
-ELECTION_MGMT_API_GATEWAY_URL = "https://lobster-app-5oxos.ondigitalocean.app/election_mgmt_service/"
+VOTE_MANAGER_API = "https://lobster-app-5oxos.ondigitalocean.app/voting-manager-image/"
+ELECTION_MGMT_API_GATEWAY_URL = "https://lobster-app-5oxos.ondigitalocean.app/election-mgmt-service-image/"
 
 # @app.route('/', methods=['GET', 'POST'])
 # def vote():
