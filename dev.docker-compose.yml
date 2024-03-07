@@ -47,6 +47,7 @@ services:
       - FLASK_APP=/election_mgmt_service-service/myapp/election_service.py
       # - DATABASE_URL=sqlite:///db.sqlite
       - DATABASE_URL=postgresql://postgres:postgres@election_mgmt_db/esortition_election_mgmt
+
     ports:
       - '5003:5003'
     volumes:
@@ -73,8 +74,7 @@ services:
     command: python3 -m flask run --reload --port=5004 --host=0.0.0.0
     environment:
       - FLASK_APP=/admin_mgmt_service-service/myapp/admin_service.py
-
-      # - ADMIN_DATABASE_URL=postgresql://postgres:postgres@admin_mgmt_db/esortition_admin_mgmt
+      - ADMIN_DATABASE_URL=postgresql://postgres:postgres@admin_mgmt_db/esortition_admin_mgmt
     ports:
       - '5004:5004'
     volumes:
