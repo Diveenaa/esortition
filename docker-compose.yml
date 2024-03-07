@@ -1,14 +1,15 @@
 version: '3.8'
 services:
   ############################## API GATEWAY #####################################
-  # nginx-api-gateway:
-  #   image: nginx:latest
-  #   volumes:
-  #     - ./nginx.conf:/etc/nginx/nginx.conf
-  #   ports:
-  #     - '80:80'
-  #   depends_on:
-  #     - voting_manager-service
+  nginx-api-gateway:
+    image: registry.digitalocean.com/esortition/nginx-api-gateway-image:latest
+    build: ./nginx_api_gateway
+    # volumes:
+    #   - ./nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - '80:80'
+    # depends_on:
+    #   - voting_manager-service
 
   ################################### ADMIN PORTAL ###############################
   admin_portal-app:
