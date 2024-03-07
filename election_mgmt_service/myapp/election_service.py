@@ -8,6 +8,7 @@ import requests
 from itsdangerous import URLSafeTimedSerializer
 from threading import Thread
 from flask_executor import Executor
+import os
 
 
 serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
@@ -288,7 +289,10 @@ def send_vote_emails(election_id):
     for voter in voters:
         print(f"sending email to: {voter.email}")
         token = serializer.dumps({'voter_id': voter.id, 'election_id': election_id}, salt='vote-token')
-        voting_link = f"http://localhost:5002/vote?token={token}"
+        if (os.getenv("FLASK_ENV")=='development'):
+            voting_link = f"http://localhost:5002/vote?token={token}"
+        else: 
+            voting_link = f"https://lobster-app-5oxos.ondigitalocean.app/voting-app-image/vote?token={token}"
         # HTML email body
         email_body_html = f"""
         <html>

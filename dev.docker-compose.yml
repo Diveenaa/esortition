@@ -21,6 +21,7 @@ services:
     environment:
       - FLASK_APP=/admin_portal-app/app:app
       - API_GATEWAY_URL=http://nginx-api-gateway/
+      - FLASK_ENV=development
     ports:
       - '5001:5001'
     volumes:
@@ -46,7 +47,7 @@ services:
     environment:
       - FLASK_APP=/election_mgmt_service-service/myapp:app
       - DATABASE_URL=postgresql://postgres:postgres@election_mgmt_db/esortition_election_mgmt
-
+      - FLASK_ENV=development
     ports:
       - '5003:5003'
     volumes:
@@ -92,6 +93,7 @@ services:
     environment:
       - FLASK_APP=/voting_app-app/voting_app.py
       - API_GATEWAY_URL=http://nginx-api-gateway/
+      - FLASK_ENV=development
     ports:
       - '5002:5002'
     volumes:
