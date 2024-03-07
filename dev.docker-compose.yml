@@ -12,14 +12,14 @@ services:
 
   ################################### ADMIN PORTAL ###############################
   admin_portal-app:
-    build: 
+    build:
       context: ./admin_portal
       dockerfile: dev.Dockerfile
     expose:
       - 5001
     command: python3 -m flask run --reload --port=5001 --host=0.0.0.0
     environment:
-      - FLASK_APP=/admin_portal-app/app/main.py
+      - FLASK_APP=/admin_portal-app/app:app
       - API_GATEWAY_URL=http://nginx-api-gateway/
     ports:
       - '5001:5001'
@@ -37,7 +37,7 @@ services:
     #   - '5433:5433'
 
   election_mgmt_service-service:
-    build: 
+    build:
       context: ./election_mgmt_service
       dockerfile: dev.Dockerfile
     expose:
@@ -65,7 +65,7 @@ services:
     #   - '5434:5434'
 
   admin_mgmt_service-service:
-    build: 
+    build:
       context: ./admin_mgmt_service
       dockerfile: dev.Dockerfile
     expose:
@@ -73,7 +73,8 @@ services:
     command: python3 -m flask run --reload --port=5004 --host=0.0.0.0
     environment:
       - FLASK_APP=/admin_mgmt_service-service/myapp/admin_service.py
-      - ADMIN_DATABASE_URL=postgresql://postgres:postgres@admin_mgmt_db/esortition_admin_mgmt
+      - ADMIN_DATABASE_URL=postgresql://doadmin:AVNS_x2tXFThTqeqiTql_lOm@esortition-do-user-16002677-0.c.db.ondigitalocean.com:25060/esortition_admin_mgmt_db?sslmode=require
+      # - ADMIN_DATABASE_URL=postgresql://postgres:postgres@admin_mgmt_db/esortition_admin_mgmt
     ports:
       - '5004:5004'
     volumes:
@@ -84,7 +85,7 @@ services:
 
   ############################## VOTING APP ######################################
   voting_app-app:
-    build: 
+    build:
       context: ./voting_app
       dockerfile: dev.Dockerfile
     expose:
@@ -109,7 +110,7 @@ services:
     #   - '5435:5435'
 
   voting_manager-service:
-    build: 
+    build:
       context: ./voting_manager
       dockerfile: dev.Dockerfile
     expose:
