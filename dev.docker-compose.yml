@@ -73,7 +73,7 @@ services:
     command: python3 -m flask run --reload --port=5004 --host=0.0.0.0
     environment:
       - FLASK_APP=/admin_mgmt_service-service/myapp/admin_service.py
-      - ADMIN_DATABASE_URL=postgresql://doadmin:AVNS_x2tXFThTqeqiTql_lOm@esortition-do-user-16002677-0.c.db.ondigitalocean.com:25060/esortition_admin_mgmt_db?sslmode=require
+
       # - ADMIN_DATABASE_URL=postgresql://postgres:postgres@admin_mgmt_db/esortition_admin_mgmt
     ports:
       - '5004:5004'
