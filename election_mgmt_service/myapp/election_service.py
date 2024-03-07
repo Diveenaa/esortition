@@ -211,17 +211,17 @@ def add_voter_data(voter_file, election_id):
 
 @app.route('/election-details/<int:election_id>', methods=['GET'])
 def get_election_details(election_id):
-    print("test")
-    token = request.headers.get('Authorization')
-    print(f"token is {token}")
-    if not token:
-        return jsonify({'error': 'Token is missing'}), 401
-    try:
-        payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
-    except jwt.ExpiredSignatureError:
-        return jsonify({'error': 'Token is expired'}), 401
-    except jwt.InvalidTokenError:
-        return jsonify({'error': 'Invalid token'}), 401
+    # print("test")
+    # token = request.headers.get('Authorization')
+    # print(f"token is {token}")
+    # if not token:
+    #     return jsonify({'error': 'Token is missing'}), 401
+    # try:
+    #     payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+    # except jwt.ExpiredSignatureError:
+    #     return jsonify({'error': 'Token is expired'}), 401
+    # except jwt.InvalidTokenError:
+    #     return jsonify({'error': 'Invalid token'}), 401
 
     # Based on election_id get the question and options.
     try:

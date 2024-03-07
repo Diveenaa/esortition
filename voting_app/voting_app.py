@@ -73,13 +73,14 @@ def vote():
         return jsonify({'error': 'Invalid or expired token'}), 400
 
 
-    token = session.get('token')
+    # token = session.get('token')
     # Correctly construct the URL to include the full path to the election-details endpoint
     microservice_url = f'{ELECTION_MGMT_API_GATEWAY_URL}election-details/{election_id}'
 
-    headers = {'Authorization': f'Bearer {token}'}
+    # headers = {'Authorization': f'Bearer {token}'}
     # response = requests.get(microservice_url, headers=headers)
-    response = make_request(microservice_url, token)
+    # response = make_request(microservice_url, token)
+    response = make_request(microservice_url)
 
     if response.status_code == 200:
         election_details = response.json()
@@ -106,7 +107,8 @@ def vote():
             }
             print(f"Vote Data: {vote_data}")
             
-            vote_response = requests.post(f'{VOTE_MANAGER_API}/votes', json=vote_data, headers={'Authorization': f'Bearer {token}'})
+            # vote_response = requests.post(f'{VOTE_MANAGER_API}/votes', json=vote_data, headers={'Authorization': f'Bearer {token}'})
+            vote_response = requests.post(f'{VOTE_MANAGER_API}/votes', json=vote_data)
             
             if vote_response.status_code == 201:
                 return render_template('vote_outcome.html', outcome='success')
