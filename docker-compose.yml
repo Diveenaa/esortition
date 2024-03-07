@@ -100,7 +100,8 @@ services:
     build: ./voting_manager
     # environment:
     #   - DATABASE_URL=postgresql://postgres:postgres@voting_db/esortition_voting
-    #   - FASTAPI_APP=/voting_manager-service/voting_manager_service.py
+    #   # - FASTAPI_APP=/voting_manager-service/voting_manager_service.py
+    #   - FLASK_APP=/voting_manager-service/myapp/voting_manager_service.py
     ports:
       - '5005:5005'
     # volumes:

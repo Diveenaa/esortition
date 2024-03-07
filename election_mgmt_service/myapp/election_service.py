@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import request, jsonify
 from datetime import datetime
 from .models import Election, Question, Option, Voter
 from . import db
