@@ -103,6 +103,7 @@ def get_user_elections():
     except Exception as e:
         print(f"Error retrieving user elections: {e}")
         return jsonify({'error': 'Failed to retrieve user elections'}), 500
+
     
 
 # API gateway needed - to get data from frontend

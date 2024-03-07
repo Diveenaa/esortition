@@ -18,8 +18,8 @@
                 <div class="card-content">
                     <div class="content">
                         <p>{{ election.description }}</p>
-                        <time datetime="{{ election.created_at }}"></time> to
-                        <time datetime="{{ election.end_date }}"></time>
+                        <p>Start: {{ election.created_at }}</p>
+                        <p>End: {{ election.end_date }}</p>
                         <details class="mt-2">
                             <summary>Voters ({{ election.voters|length }})</summary>
                             <ul>
