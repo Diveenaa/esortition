@@ -8,4 +8,6 @@ COPY . .
 
 EXPOSE 5003
 
+ENV FLASK_APP=/election_mgmt_service-service/myapp:app
+
 CMD [ "python3", "-m" , "flask", "run", "--port=5003", "--host=0.0.0.0"]
