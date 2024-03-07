@@ -19,7 +19,7 @@ services:
       - 5001
     command: python3 -m flask run --reload --port=5001 --host=0.0.0.0
     environment:
-      - /admin_portal-app/app/main.py #not actaully sure what this is doing?
+      - FLASK_APP=/admin_portal-app/app/main.py
       - API_GATEWAY_URL=http://nginx-api-gateway/
     ports:
       - '5001:5001'
@@ -51,7 +51,6 @@ services:
       - '5003:5003'
     volumes:
       - ./election_mgmt_service:/election_mgmt_service-service
-      - ./data:/data # Mount a volume to persist the SQLite database file. Shouldn't need this.
     depends_on:
       - election_mgmt_db
 
@@ -94,7 +93,6 @@ services:
     environment:
       - FLASK_APP=/voting_app-app/voting_app.py
       - API_GATEWAY_URL=http://nginx-api-gateway/
-      # - DATABASE_URL=postgresql://postgres:postgres@db/esortition_voting
     ports:
       - '5002:5002'
     volumes:

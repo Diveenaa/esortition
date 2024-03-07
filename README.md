@@ -13,7 +13,7 @@ SSE group CW2
     ```bash
     docker-compose exec election_mgmt_service-service flask db upgrade
     docker-compose exec admin_mgmt_service-service flask db upgrade
-    docker-compose exec voting_manager-service flask upgrade head
+    docker-compose exec voting_manager-service flask db upgrade
     ```
 
     IF YOU MAKE DB CHANGES:
