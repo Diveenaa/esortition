@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>eSortition</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css" />
+    <style>
+        /* Additional styles can go here */
+        .logo-large {
+            font-size: 30px; /* Adjust the size as needed */
+            font-weight: bold; /* Optional: makes the text bold */
+        }
+    </style>
+</head>
+
+<body>
+    <section class="hero is-primary is-fullheight">
+
+        <div class="hero-head">
+            <nav class="navbar">
+                <div class="container">
+                    <div class="navbar-brand">
+                        <!-- logo placeholder -->
+                        <div class="navbar-item logo-large">
+                            <strong>eSortition</strong>
+                        </div>
+                        <!-- burger menu for mobile, needs JS to work -->
+                        <!-- <span class="navbar-burger burger" data-target="navbarMenuHeroA">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </span> -->
+                    </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+
+        <div class="hero-body">
+            <div class="container has-text-centered">
+               {% block content %}
+               {% endblock %}
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>

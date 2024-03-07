@@ -62,3 +62,12 @@ docs/_build/
 
 # .DS_Store
 .DS_Store
+
+#vscode workspace
+*.code-workspace
+
+#dump.rdb
+*dump.rdb
+
+serverless
+gateway

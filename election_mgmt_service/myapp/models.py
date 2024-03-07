@@ -35,7 +35,7 @@ class Option(db.Model):
 
 class Voter(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(100), unique=True)
+    email = db.Column(db.String(100))
     name = db.Column(db.String(100))
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     token = db.Column(db.String(100), unique=True, nullable=True)

@@ -19,3 +19,5 @@ SQLAlchemy==2.0.27
 typing_extensions==4.10.0
 Werkzeug==3.0.1
 zope.interface==6.2
+requests==2.31.0
+Flask-Executor==1.0.0

@@ -16,3 +16,5 @@ SQLAlchemy==2.0.27
 typing_extensions==4.10.0
 urllib3==2.2.1
 Werkzeug==3.0.1
+WTForms==3.1.2
+Flask-WTF==1.2.1

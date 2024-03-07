@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<div class="container">
+    <section class="section">
+        <div class="column is-half is-offset-one-quarter">
+            <div class="box">
+                <h1 class="title has-text-centered has-text-dark" style="margin-bottom: 1.5rem;">{{ question }}</h1>
+                <form action="" method="post">
+                    {{ form.hidden_tag() }}
+                    <div class="field">
+                        {% for subfield in form.choice %}
+                        <div class="level">
+                            <div class="level-item has-text-centered">
+                                <label class="radio" style="padding-right: 1rem; font-size: 1.2em;">
+                                    {{ subfield }} {{ subfield.label.text }}
+                                </label>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="field">
+                        <div class="control">
+                            {{ form.submit(class="button is-link is-fullwidth", style="margin-top: 1.5rem;") }}
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
