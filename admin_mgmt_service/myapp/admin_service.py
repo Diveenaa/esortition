@@ -9,6 +9,7 @@ from flask_login import LoginManager, login_required, current_user, login_user, 
 from .models import User
 from . import db
 import os
+import logging
 
 app = create_app()
 CORS(app)  # Enable CORS for all routes in your Flask app
@@ -36,7 +37,7 @@ def load_user(user_id):
 @app.route('/')
 def index():
     token = request.headers.get('Authorization')
-    print(token)
+    logging.info(token)
     if not token:
         return jsonify({'error': 'Token is missing'}), 401
 
@@ -67,20 +68,20 @@ def auth_user():
     # check if user  exists
     # take the  password hash it and compare it to the hashed password in the db
     if not user or not check_password_hash(user.password, password):
-        print("invalid creds")
+        logging.info("invalid creds")
         return jsonify({'error': 'Incorrect email or password'}), 401
     
     else:
-        print("authenticated")
+        logging.info("authenticated")
         login_user(user, remember=remember, duration=timedelta(days=365))
-        print(current_user.name)
-        print(current_user.is_authenticated)
+        logging.info(current_user.name)
+        logging.info(current_user.is_authenticated)
         token_payload = {
             'user_id': user.id,
             'is_authenticated': current_user.is_authenticated  # Include the authentication status in the payload
         }
         token = jwt.encode(token_payload, app.config['SECRET_KEY'], algorithm='HS256')
-        print(token)
+        logging.info(token)
         response_data = {
             'user': {'id': user.id, 'email': user.email, 'is_active': user.is_active, 'name': user.name},
             'token': token
@@ -92,7 +93,7 @@ def auth_user():
 #@login_required # only logged in user can see this
 def profile():
     token = request.headers.get('Authorization')
-    print(token)
+    logging.info(token)
     if not token:
         return jsonify({'error': 'Token is missing'}), 401
 
@@ -135,18 +136,18 @@ def add_user_info():
         db.session.add(new_user)
         db.session.commit()
        
-        print("User added successfully to the database")
+        logging.info("User added successfully to the database")
         return jsonify({'name': name})
     
     except Exception as e:
         # Handle errors (e.g., database errors)
         db.session.rollback()
-        print(f"Error adding user data to the database: {e}")
+        logging.info(f"Error adding user data to the database: {e}")
 
 @app.route('/logout')
 def logout():
     token = request.headers.get('Authorization')
-    print(token)
+    logging.info(token)
     if not token:
         return jsonify({'error': 'Token is missing'}), 401
     logout_user()

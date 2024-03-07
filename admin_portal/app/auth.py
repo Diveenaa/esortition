@@ -2,6 +2,7 @@ from flask_login import login_user, login_required, logout_user
 from flask import Blueprint, render_template, redirect, url_for, request, flash, session
 import requests
 from . import ADMIN_MGMT_API_GATEWAY_URL
+import logging
 
 auth = Blueprint('auth', __name__)
 
@@ -67,15 +68,15 @@ def signup_post():
             flash('Email address already exists')
             return redirect(url_for('auth.signup'))
         if response.status_code == 200:
-            print("Data sent successfully to microservice!")
+            logging.info("Data sent successfully to microservice!")
             return redirect(url_for('auth.login'))
         else:
-            print(f"Failed to send data to microservice. Status code: {response.status_code}")
+            logging.info(f"Failed to send data to microservice. Status code: {response.status_code}")
             flash('Please try again')
             return redirect(url_for('auth.signup'))
     except requests.RequestException as e:
         # Handle any errors that occur during the request
-        print(f"Error sending data to microservice: {e}")
+        logging.info(f"Error sending data to microservice: {e}")
         flash('Please try again')
         return redirect(url_for('auth.signup'))
 
@@ -88,10 +89,10 @@ def logout():
 
     response = requests.get(microservice_url, headers={'Authorization': token})
     if response.status_code == 200:
-        print("Logout successful")
+        logging.info("Logout successful")
         session.pop('token', None)
         return redirect(url_for('main.index'))
 
     else:
-        print("Logout failed")
+        logging.info("Logout failed")
         return redirect(url_for('main.index'))

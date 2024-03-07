@@ -8,20 +8,21 @@ from io import StringIO
 from .forms import ElectionForm, QuestionForm, OptionForm
 import requests
 from . import ADMIN_MGMT_API_GATEWAY_URL, ELECTION_MGMT_API_GATEWAY_URL
+import logging
 
 main = Blueprint('main', __name__)
 
 @main.route('/')
 def index():
     verified = is_authenticated()
-    print(verified)
+    logging.info(verified)
     return render_template('index.html', is_authenticated=verified)
 
 # API Gateway
 @main.route('/profile')
 def profile():
     token = session.get('token')
-    print(token)
+    logging.info(token)
     if not token:
         return redirect(url_for('auth.login'))  # Redirect to login if token is not found
     
@@ -60,14 +61,14 @@ def create_election():
         }
 
         if send_data_to_election_microservice(form_data):
-            print('Election created successfully!')
+            logging.info('Election created successfully!')
             return redirect(url_for('main.my_elections'))
         
         else:
-            print('connection failed') #TO-DO - print the correct error
+            logging.info('connection failed') #TO-DO - print the correct error
 
     else:
-        print(form.errors)
+        logging.info(form.errors)
     
     return render_template('create_election.html', form=form, is_authenticated=True)
 
@@ -77,7 +78,7 @@ def send_data_to_election_microservice(form_data):
 
     ######################## here we want to change to api gateway ##################
     token = session.get('token')
-    print(token)
+    logging.info(token)
     
     microservice_url = f'{ELECTION_MGMT_API_GATEWAY_URL}create-election'
 
@@ -85,14 +86,14 @@ def send_data_to_election_microservice(form_data):
         response = requests.post(microservice_url, json=form_data, headers={'Authorization': token})
         # Check if the request was successful (status code 200)
         if response.status_code == 200:
-            print("Data sent successfully to microservice!")
+            logging.info("Data sent successfully to microservice!")
             return True
         else:
-            print(f"Failed to send data to microservice. Status code: {response.status_code}")
+            logging.info(f"Failed to send data to microservice. Status code: {response.status_code}")
             return False
     except requests.RequestException as e:
         # Handle any errors that occur during the request
-        print(f"Error sending data to microservice: {e}")
+        logging.info(f"Error sending data to microservice: {e}")
         return False
 
 
@@ -100,7 +101,7 @@ def send_data_to_election_microservice(form_data):
 @main.route('/my_elections')
 def my_elections():
     token = session.get('token')
-    print(token)
+    logging.info(token)
     
     microservice_url = f'{ELECTION_MGMT_API_GATEWAY_URL}fetch-elections'
     
@@ -109,18 +110,18 @@ def my_elections():
         
         # Check if the response object is not None and status code is 200
         if response and response.status_code == 200:
-            print(response.content)
+            logging.info(response.content)
             elections = response.json()
             return render_template('my_elections.html', elections=elections, is_authenticated=True)
         else:
             # Log detailed error information
             if response:
-                print(f"Failed to fetch user elections. Status code: {response.status_code}, Content: {response.content}")
+                logging.info(f"Failed to fetch user elections. Status code: {response.status_code}, Content: {response.content}")
             else:
-                print("Failed to fetch user elections. No response received.")
+                logging.info("Failed to fetch user elections. No response received.")
             return make_response("Error fetching user elections", 500)
     except requests.RequestException as e:
-        print(f"Error fetching user elections: {e}")
+        logging.info(f"Error fetching user elections: {e}")
         return make_response("Error fetching user elections", 500)
 
 
@@ -137,7 +138,7 @@ def download_voters(election_id):
     # cw.writerow(['Email', 'Name'])
     
     voters = response.json()
-    print(voters)
+    logging.info(voters)
     if response.status_code == 200:
         for voter in voters:
             cw.writerow([voter['email'], voter['name']])
@@ -151,7 +152,7 @@ def download_voters(election_id):
             headers={"Content-disposition":
                     "attachment; filename=voters_election.csv".format(election_id)})
     else:
-        print(f"Failed to fetch voters. Status code: {response.status_code}")
+        logging.info(f"Failed to fetch voters. Status code: {response.status_code}")
         return []
     
 
@@ -168,13 +169,13 @@ def make_request(url, token=None):
         response.raise_for_status()  # Raise an exception for 4xx or 5xx status codes
         return response
     except requests.RequestException as e:
-        print(f"Error making request to {url}: {e}")
+        logging.info(f"Error making request to {url}: {e}")
         return None
 
 # API Gateway
 def is_authenticated():
     token = session.get('token')
-    print(token)
+    logging.info(token)
     if not token:
         return False
     
@@ -184,8 +185,8 @@ def is_authenticated():
         response = make_request(microservice_url, token)
         data = response.json()
         is_authenticated = data['is_authenticated']
-        print('value', is_authenticated)
+        logging.info('value', is_authenticated)
         return is_authenticated
     except requests.RequestException as e:
-        print(f"Error making request: {e}")
+        logging.info(f"Error making request: {e}")
         return None
