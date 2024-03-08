@@ -21,3 +21,10 @@ services:
       - name: voting
         paths:
           - /voting
+
+  - name: voting_app
+    url: http://host.docker.internal:5002
+    routes:
+      - name: voting_app
+        paths:
+          - /voting_app
