@@ -9,6 +9,5 @@ COPY . .
 EXPOSE 5002
 
 ENV FLASK_APP=/voting_app-app/voting_app.py
-ENV FLASK_ENV='production'
 
 CMD [ "python3", "-m" , "flask", "run", "--port=5002", "--host=0.0.0.0"]
