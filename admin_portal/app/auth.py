@@ -11,7 +11,7 @@ auth = Blueprint('auth', __name__)
 def login():
     return render_template('login.html', is_authenticated = False)
 
-# API gaetway needed - to check data in microservice
+
 @auth.route('/login', methods=['POST'])
 def login_post():
 

@@ -1,41 +1,28 @@
-name: Build and Deploy
-
 on:
   push:
     branches:
       - main
 
-# jobs:
-#   build:
-#     name: Build and Test
-#     runs-on: ubuntu-latest
-
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v3
-
-#       - name: Setup Python
-#         uses: actions/setup-python@v4
-#         with:
-#           python-version: 3.9
-      
-#       - name: Install dev-requirements
-#         run: pip install -r dev-requirements.txt
-
-#       - name: Iterate over directories and test flake8
-#         run: |
-#           for dir in */; do
-#             if [ "$dir" != ".github/" ] && [ "$dir" != "data/" ]; then
-#               cd "$dir"
-#               flake8 *.py
-#               cd ..
-#             fi
-#           done
-
 jobs:
+  build:
+    name: Build and Checkout Code
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+      
+      - name: Install dev-requirements
+        run: pip install -r dev-requirements.txt
+
   deploy:
     name: Deploy to Container Registry
-    # needs: build
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
