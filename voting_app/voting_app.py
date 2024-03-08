@@ -5,7 +5,6 @@ import os
 from forms import create_vote_form
 from itsdangerous import URLSafeTimedSerializer
 
-
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret-key-goes-here'
 
@@ -14,42 +13,6 @@ serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
 API_GATEWAY_URL = os.getenv("API_GATEWAY_URL")
 VOTE_MANAGER_API = API_GATEWAY_URL + "voting/"
 ELECTION_MGMT_API_GATEWAY_URL = API_GATEWAY_URL + "election_mgmt_service/"
-
-# def vote():
-
-#     if request.method == 'POST':
-#         # Extract vote details from the form submission
-#         vote_data = {
-#             "username": request.form.get("username"),  # Example field
-#             "age": int(request.form.get("age")),  # Example field
-#             # Add additional fields as needed based on your voting form and Vote model
-#         }
-        
-#         # Submit the vote to the microservice via the API gateway
-#         response = requests.post(VOTE_MANAGER_API + "votes/", json=vote_data)
-#         if response.status_code == 201:  # Assuming 201 Created response on successful vote submission
-#             # Redirect to a success page or back to voting page with a success message
-#             return redirect(url_for('vote_success'))
-#         else:
-#             # Handle errors or unsuccessful vote submission
-#             # This could involve rendering the voting page with an error message
-#             error_message = "Failed to submit vote. Please try again."
-#             return render_template('voting.html', error_message=error_message)
-        
-#     # Fetch voter information from the voting_manager microservice
-#     response = requests.get(VOTE_MANAGER_API + "votes/")
-#     if response.status_code == 200:
-#         voters = response.json()  # Assuming the response is JSON containing voter data
-#     else:
-#         voters = []  # Handle errors or empty responses as needed
-
-#     return render_template('voting.html', voters=voters)
-
-
-# @app.route('/success', methods=['GET'])
-# def vote_success():
-#     return render_template('vote_success.html')
-
 
 
 @app.route('/vote', methods=['GET', 'POST'])
@@ -69,13 +32,8 @@ def vote():
         return jsonify({'error': 'Invalid or expired token'}), 400
 
 
-    # token = session.get('token')
-    # Correctly construct the URL to include the full path to the election-details endpoint
     microservice_url = f'{ELECTION_MGMT_API_GATEWAY_URL}election-details/{election_id}'
 
-    # headers = {'Authorization': f'Bearer {token}'}
-    # response = requests.get(microservice_url, headers=headers)
-    # response = make_request(microservice_url, token)
     response = make_request(microservice_url)
 
     if response.status_code == 200:
@@ -109,7 +67,6 @@ def vote():
             }
             print(f"Vote Data: {vote_data}")
             
-            # vote_response = requests.post(f'{VOTE_MANAGER_API}/votes', json=vote_data, headers={'Authorization': f'Bearer {token}'})
             vote_response = requests.post(f'{VOTE_MANAGER_API}/votes', json=vote_data)
             
             if vote_response.status_code == 201:

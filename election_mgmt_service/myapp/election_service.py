@@ -10,12 +10,8 @@ from threading import Thread
 from flask_executor import Executor
 import os
 
-
 serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
 executor = Executor(app)
-
-
-# app = create_app()
 
 @app.route('/')
 def hello_microservice():
@@ -230,19 +226,7 @@ def add_voter_data(voter_file, election_id):
 
 @app.route('/election-details/<int:election_id>', methods=['GET'])
 def get_election_details(election_id):
-    # print("test")
-    # token = request.headers.get('Authorization')
-    # print(f"token is {token}")
-    # if not token:
-    #     return jsonify({'error': 'Token is missing'}), 401
-    # try:
-    #     payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
-    # except jwt.ExpiredSignatureError:
-    #     return jsonify({'error': 'Token is expired'}), 401
-    # except jwt.InvalidTokenError:
-    #     return jsonify({'error': 'Invalid token'}), 401
 
-    # Based on election_id get the question and options.
     try:
         election = Election.query.get_or_404(election_id)
         question = Question.query.filter_by(election_id=election_id).first()

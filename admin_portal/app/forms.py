@@ -10,7 +10,6 @@ def validate_not_past(form, field):
 
 class OptionForm(FlaskForm):
     option = StringField('Option')
-    # option = StringField('Option', validators=[DataRequired()])
 
 class QuestionForm(FlaskForm):
     question_text = StringField('Question', validators=[DataRequired()])

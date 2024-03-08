@@ -4,7 +4,6 @@ from .models import Vote
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import func
 
-
 @app.route('/votes', methods=['POST'])
 def create_vote():
     data = request.get_json()
