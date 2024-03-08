@@ -6,12 +6,17 @@ Welcome to eSortition, a platform designed for managing elections and facilitati
 
 To run the application locally, follow these steps:
 
-1. Run the application using Docker Compose:
+1. Create the network for kong:
+    ```bash
+    docker network create kong-net
+    ```
+
+2. Run the application using Docker Compose:
     ```bash
     docker-compose -f dev.docker-compose.yml up
     ```
 
-2. Apply migrations to create database tables:
+3. Apply migrations to create database tables:
     ```bash
     docker-compose exec election_mgmt_service-service flask db upgrade
     docker-compose exec admin_mgmt_service-service flask db upgrade
@@ -26,7 +31,7 @@ To run the application locally, follow these steps:
 
 ## Live Application
 
-Access the live application [https://lobster-app-5oxos.ondigitalocean.app/](https://lobster-app-5oxos.ondigitalocean.app/).
+Access the live application (email team for access) [https://lobster-app-5oxos.ondigitalocean.app/](https://lobster-app-5oxos.ondigitalocean.app/).
 
 ## Stack
 
