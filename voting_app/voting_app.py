@@ -1,4 +1,5 @@
 from flask import Flask, request, render_template, redirect, url_for, session, jsonify
+from datetime import datetime
 import requests
 import os
 from forms import create_vote_form
@@ -81,8 +82,14 @@ def vote():
         election_details = response.json()
         question = election_details['question']
         options = election_details['options']
-        print(f"Election details: {election_details}")
-        print(f"Election response: {response}")
+
+        end_date_str = election_details['end_date']
+        end_date = datetime.strptime(end_date_str, '%Y-%m-%d %H:%M:%S')
+        # Compare with current datetime
+        if datetime.now() > end_date:
+            # Election has ended, voting is not allowed
+            return render_template('vote_outcome.html', outcome='election_ended', end_date=end_date_str)
+
         VoteForm = create_vote_form(options)
         form = VoteForm
 

@@ -1,6 +1,8 @@
 from flask import request, jsonify
 from . import db, app
 from .models import Vote
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.sql import func
 
 
 @app.route('/votes', methods=['POST'])
@@ -21,15 +23,24 @@ def create_vote():
     db.session.commit()
     return jsonify(new_vote.id), 201
 
-@app.route('/voters', methods=['GET'])
-def read_votes():
-    try:
-        votes_query = Vote.query.all()  # Attempt to query all votes from the database
-        votes = [vote.as_dict() for vote in votes_query]  # Attempt to convert vote objects to dictionaries
-        return jsonify(votes)  # Return the votes as JSON
-    except Exception as e:
-        # Log the exception if you have logging set up, e.g., app.logger.error(f"Error reading votes: {str(e)}")
-        
-        # Return a JSON error response with a 500 Internal Server Error status code
-        return jsonify({"error": "An error occurred while fetching votes."}), 500
-
+@app.route('/election_results/<int:election_id>', methods=['GET'])
+def get_election_results(election_id):
+    print(election_id)
+    votes = Vote.query.filter_by(election_id=election_id).all()
+    
+    # Aggregate the results
+    results = {}
+    for vote in votes:
+        # Assuming 'option' is the ID of the voted option
+        if vote.option in results:
+            results[vote.option] += 1
+        else:
+            results[vote.option] = 1
+    
+    # Convert the aggregated results to a list of dictionaries with option_id and vote_count
+    results_list = [{'option_id': option_id, 'vote_count': count} for option_id, count in results.items()]
+    
+    print(results_list)
+    print("test election_results")
+    # Return the results as JSON
+    return jsonify(results_list), 200

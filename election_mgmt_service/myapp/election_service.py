@@ -1,5 +1,5 @@
 from flask import request, jsonify
-from datetime import datetime
+from datetime import datetime, timezone
 from .models import Election, Question, Option, Voter
 from . import db
 from . import app
@@ -67,9 +67,8 @@ def create_election():
     end_date = election.end_date.strftime('%Y-%m-%d %H:%M:%S')
 
     for voter in voters:
-        # Use executor to run send_vote_email function asynchronously
+        # use executor to run send_vote_email function asynchronously
         executor.submit(send_vote_email, voter, new_election.id, end_date)
-
 
     # Return the received data in the response
     return jsonify({'message': 'Election created successfully'}), 200
@@ -88,13 +87,32 @@ def get_user_elections():
         elections = Election.query.filter_by(creator_id=id).all()
         election_data = []
         for election in elections:
+            questions = Question.query.filter_by(election_id=election.id).all()
+            questions_data = [{
+                'id': question.id,
+                'text': question.text,
+                'options': [{
+                    'id': option.id,
+                    'text': option.text
+                } for option in question.options]
+            } for question in questions]
+
+            end_date_naive = election.end_date.astimezone(timezone.utc).replace(tzinfo=None)
+
+            if datetime.utcnow() < end_date_naive:
+                status = 'In Progress'
+            else:
+                status = 'Finished'
+
             election_info = {
                 'id': election.id,
                 'title': election.title,
                 'description': election.description,
                 'created_at': election.created_at.strftime('%d-%m-%Y %H:%M'),
                 'end_date': election.end_date.strftime('%d-%m-%Y %H:%M'),
-                'voters': [{'email': voter.email, 'name': voter.name} for voter in election.voters]  # Extract voter emails and names
+                'status': status,
+                'voters': [{'email': voter.email, 'name': voter.name} for voter in election.voters],
+                'questions': questions_data
             }
             election_data.append(election_info)
         print(election_data)
@@ -103,6 +121,7 @@ def get_user_elections():
     except Exception as e:
         print(f"Error retrieving user elections: {e}")
         return jsonify({'error': 'Failed to retrieve user elections'}), 500
+
     
 
 # API gateway needed - to get data from frontend
@@ -228,6 +247,7 @@ def get_election_details(election_id):
         election = Election.query.get_or_404(election_id)
         question = Question.query.filter_by(election_id=election_id).first()
         options = Option.query.filter_by(question_id=question.id).all()
+        end_date_str = election.end_date.strftime('%Y-%m-%d %H:%M:%S')
 
         # jsonify response
         election_details = {
@@ -235,7 +255,8 @@ def get_election_details(election_id):
                 'id': question.id,
                 'text': question.text
             },
-            'options': [{'id': option.id, 'text': option.text} for option in options]
+            'options': [{'id': option.id, 'text': option.text} for option in options],
+            'end_date': end_date_str
         }
 
         return jsonify(election_details), 200
