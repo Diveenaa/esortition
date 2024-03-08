@@ -42,9 +42,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # - name: Log into GHCR
-      #   run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
-      # Install doctl.
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
         with:
@@ -60,14 +57,3 @@ jobs:
         run: |
           docker-compose -f docker-compose.yml build --no-cache
           docker-compose -f docker-compose.yml push
-
-      # - name: Iterate over directories and build/push images
-      #   run: |
-      #     for dir in */; do
-      #       if [ "$dir" != ".github/" ] && [ "$dir" != "data/" ]; then
-      #         image_name="${dir%/}"
-      #         docker build -t "$image_name:latest" "$dir"
-      #         docker tag "$image_name:latest" "ghcr.io/${{ secrets.GHCR_USERNAME }}/$image_name:latest"
-      #         docker push "ghcr.io/${{ secrets.GHCR_USERNAME }}/$image_name:latest"
-      #       fi
-      #     done

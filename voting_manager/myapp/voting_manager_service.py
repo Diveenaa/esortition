@@ -6,11 +6,20 @@ from .models import Vote
 @app.route('/votes', methods=['POST'])
 def create_vote():
     data = request.get_json()
-    vote = Vote(voter_id=data['voter_id'], question=data['question'],
-                option=data['option'], election_id=data['election_id'])
-    db.session.add(vote)
+    voter_id = data['voter_id']
+    question_id = data['question']
+    election_id = data['election_id']
+
+    # check if voter has already voted
+    existing_vote = Vote.query.filter_by(voter_id=voter_id, question=question_id, election_id=election_id).first()
+    if existing_vote:
+        return jsonify({'message': 'You have already voted for this question.'}), 409
+
+    new_vote = Vote(voter_id=voter_id, question=question_id,
+                    option=data['option'], election_id=election_id)
+    db.session.add(new_vote)
     db.session.commit()
-    return jsonify(vote.id), 201 
+    return jsonify(new_vote.id), 201
 
 @app.route('/voters', methods=['GET'])
 def read_votes():

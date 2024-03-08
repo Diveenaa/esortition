@@ -211,17 +211,17 @@ def add_voter_data(voter_file, election_id):
 
 @app.route('/election-details/<int:election_id>', methods=['GET'])
 def get_election_details(election_id):
-    print("test")
-    token = request.headers.get('Authorization')
-    print(f"token is {token}")
-    if not token:
-        return jsonify({'error': 'Token is missing'}), 401
-    try:
-        payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
-    except jwt.ExpiredSignatureError:
-        return jsonify({'error': 'Token is expired'}), 401
-    except jwt.InvalidTokenError:
-        return jsonify({'error': 'Invalid token'}), 401
+    # print("test")
+    # token = request.headers.get('Authorization')
+    # print(f"token is {token}")
+    # if not token:
+    #     return jsonify({'error': 'Token is missing'}), 401
+    # try:
+    #     payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+    # except jwt.ExpiredSignatureError:
+    #     return jsonify({'error': 'Token is expired'}), 401
+    # except jwt.InvalidTokenError:
+    #     return jsonify({'error': 'Invalid token'}), 401
 
     # Based on election_id get the question and options.
     try:
@@ -231,8 +231,11 @@ def get_election_details(election_id):
 
         # jsonify response
         election_details = {
-            'question': question.text,
-            'options': [option.text for option in options]
+            'question': {
+                'id': question.id,
+                'text': question.text
+            },
+            'options': [{'id': option.id, 'text': option.text} for option in options]
         }
 
         return jsonify(election_details), 200
@@ -242,111 +245,13 @@ def get_election_details(election_id):
         return jsonify({'error': 'Failed to retrieve election details'}), 500
 
 
-
-# NOT IN USE - this modified version of add_voter_data will modify the function to also generate the unique token
-# def add_voter_data(voter_file, election_id, end_date):
-#     rows = voter_file.split('\n')
-#     try:
-#         for row in rows:
-#             email, name = row.strip().split(',')
-#             # generate token for voting
-#             token_payload = {
-#                 'email': email,
-#                 'election_id': election_id,
-#                 'exp': end_date
-#             }
-#             token = jwt.encode(token_payload, app.config['SECRET_KEY'], algorithm='HS256')
-#             voter = Voter(email=email, name=name, election_id=election_id, token=token)
-#             db.session.add(voter)
-#             db.session.commit()
-#         print("Voter data added successfully to the database")
-
-#     except Exception as e:
-#         # Handle errors (e.g., database errors)
-#         db.session.rollback()
-#         print(f"Error adding voters data to the database: {e}")
-
-
-
-
-def send_vote_emails_background(election_id):
-    """
-    Wrapper function to call send_vote_emails in a separate thread.
-    """
-    thread = Thread(target=send_vote_emails, args=(election_id,))
-    thread.start()
-
-# Calls the serverless function for each voter to send email containing unique link
-def send_vote_emails(election_id):
-
-    # get voters
-    voters = Voter.query.filter_by(election_id=election_id).all()
-    election = Election.query.filter_by(id=election_id).first()
-    end_date = election.end_date.strftime('%Y-%m-%d %H:%M:%S')
-    
-    email_service_url = "https://esortition-email-send.azurewebsites.net/api/HttpTrigger2?code=iSYkxWBvsPD9hLrtAB9aMW-r9pbazdvg0sh1ow8SJb8AAzFu5bTkcA=="
-
-    for voter in voters:
-        print(f"sending email to: {voter.email}")
-        token = serializer.dumps({'voter_id': voter.id, 'election_id': election_id}, salt='vote-token')
-        if (os.getenv("FLASK_ENV")=='development'):
-            voting_link = f"http://localhost:5002/vote?token={token}"
-        else: 
-            voting_link = f"https://lobster-app-5oxos.ondigitalocean.app/voting-app-image/vote?token={token}"
-        # HTML email body
-        email_body_html = f"""
-        <html>
-        <body>
-            <p>Hello {voter.name},</p>
-            
-            <p>Please use the following link to cast your vote in the election:</p>
-            <a href="{voting_link}">{voting_link}</a>
-            
-            <p>This link will expire at the end of the election period on <strong>{end_date}</strong>.</p>
-            
-            <p>Thank you for participating!</p>
-        </body>
-        </html>
-        """
-
-        # Plain text email body
-        email_body_plain = f"""
-        Hello {voter.name},
-        
-        Please use the following link to cast your vote in the election:
-        {voting_link}
-        
-        This link will expire at the end of the election period on {end_date}.
-        
-        Thank you for participating!
-        """
-
-        # payload for serverless function
-        payload = {
-            "recipient_address": voter.email,
-            "subject": "Your Voting Link for the Upcoming Election",
-            "plain_text_body": email_body_html,
-            "html_body": email_body_html
-        }
-
-        # API call to the serverless email sending function
-        try:
-            requests.post(email_service_url, json=payload)
-            # response = requests.post(email_service_url, json=payload)
-            # if response.status_code == 200:
-            #     print(f"Email successfully sent to {voter.email}")
-            # else:
-            #     print(f"Failed to send email to {voter.email}. Response Code: {response.status_code}")
-        except Exception as e:
-            print(f"An error occurred while sending email to {voter.email}: {e}")
-
-
-
 def send_vote_email(voter, election_id, end_date):
     # Generate the token and voting link
     token = serializer.dumps({'voter_id': voter.id, 'election_id': election_id}, salt='vote-token')
-    voting_link = f"http://localhost:5002/vote?token={token}"
-    
+    if (os.getenv("FLASK_ENV")=='development'):
+        voting_link = f"http://localhost:5002/vote?token={token}"
+    else:
+        voting_link = f"https://lobster-app-5oxos.ondigitalocean.app/voting-app-image/vote?token={token}"
     email_service_url = "https://esortition-email-send.azurewebsites.net/api/HttpTrigger2?code=iSYkxWBvsPD9hLrtAB9aMW-r9pbazdvg0sh1ow8SJb8AAzFu5bTkcA=="
 
     # HTML email body
