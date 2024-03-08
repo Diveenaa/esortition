@@ -1,0 +1,23 @@
+_format_version: "2.1"
+
+services:
+  - name: admin_mgmt_service
+    url: http://host.docker.internal:5004
+    routes:
+      - name: admin_mgmt_service
+        paths:
+          - /admin_mgmt_service
+
+  - name: election_mgmt_service
+    url: http://host.docker.internal:5003
+    routes:
+      - name: election_mgmt_service
+        paths:
+          - /election_mgmt_service
+
+  - name: voting
+    url: http://host.docker.internal:5005
+    routes:
+      - name: voting
+        paths:
+          - /voting
