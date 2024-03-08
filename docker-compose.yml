@@ -1,22 +1,61 @@
+version: '3.8'
 services:
-  
-  esortition-app:
-    build: .
-    environment:
-      - FLASK_APP=/esortition-app/app.py
-    ports:
-      - "5001:5000"
-  
-  microservice1-app:
-    build: ./microservice1
-    environment:
-      - FLASK_APP=/microservice1-app/micro_app.py
-    ports:
-      - "5002:5001"
+  ############################## API GATEWAY #####################################
+  # nginx-api-gateway:
+  #   image: registry.digitalocean.com/esortition/nginx-api-gateway-image:latest
+  #   build: ./nginx_api_gateway
+  #   # volumes:
+  #   #   - ./nginx.conf:/etc/nginx/nginx.conf
+  #   ports:
+  #     - '80:80'
+  #   # depends_on:
+  #   #   - voting_manager-service
 
-  microservice2-app:
-    build: ./microservice2
+  kong:
+    image: registry.digitalocean.com/esortition/kong-image:latest #TO REPLEACE
+    build: ./kong_api_gateway
     environment:
-      - FLASK_APP=/microservice2-app/micro_app.py
+      - KONG_DATABASE=off
+      - KONG_PROXY_ACCESS_LOG=/dev/stdout
+      - KONG_ADMIN_ACCESS_LOG=/dev/stdout
+      - KONG_PROXY_ERROR_LOG=/dev/stderr
+      - KONG_ADMIN_ERROR_LOG=/dev/stderr
+      - KONG_ADMIN_LISTEN=0.0.0.0:8001, 0.0.0.0:8444 ssl
     ports:
-      - "5003:5002"
+      - "8000:8000"
+      - "8443:8443"
+
+  ################################### ADMIN PORTAL ###############################
+  admin_portal-app:
+    image: registry.digitalocean.com/esortition/admin-portal-image:latest
+    build: ./admin_portal
+    ports:
+      - '5001:5001'
+
+  ################### ELECTION MANAGEMENT MICROSERVICE ###########################
+  election_mgmt_service-service:
+    image: registry.digitalocean.com/esortition/election-mgmt-service-image:latest
+    build: ./election_mgmt_service
+    ports:
+      - '5003:5003'
+
+  ################### ADMIN MANAGEMENT MICROSERVICE ##############################
+  admin_mgmt_service-service:
+    image: registry.digitalocean.com/esortition/admin-mgmt-service-image:latest
+    build: ./admin_mgmt_service
+    ports:
+      - '5004:5004'
+
+  ############################## VOTING APP ######################################
+  voting_app-app:
+    image: registry.digitalocean.com/esortition/voting-app-image:latest
+    build: ./voting_app
+    ports:
+      - '5002:5002'
+
+  ########################### VOTING MICROSERVICE ################################
+  voting_manager-service:
+    image: registry.digitalocean.com/esortition/voting-manager-image:latest
+    build: ./voting_manager
+    ports:
+      - '5005:5005'

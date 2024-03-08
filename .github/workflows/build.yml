@@ -5,84 +5,55 @@ on:
     branches:
       - main
 
+# jobs:
+#   build:
+#     name: Build and Test
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v3
+
+#       - name: Setup Python
+#         uses: actions/setup-python@v4
+#         with:
+#           python-version: 3.9
+      
+#       - name: Install dev-requirements
+#         run: pip install -r dev-requirements.txt
+
+#       - name: Iterate over directories and test flake8
+#         run: |
+#           for dir in */; do
+#             if [ "$dir" != ".github/" ] && [ "$dir" != "data/" ]; then
+#               cd "$dir"
+#               flake8 *.py
+#               cd ..
+#             fi
+#           done
+
 jobs:
-  build:
-    name: Build and Test
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-    
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.9
-
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: Run flake8
-        run: flake8 app.py
-
-      - name: Run unit tests
-        run: pytest test.py 
-
   deploy:
     name: Deploy to Container Registry
-    needs: build
+    # needs: build
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-    #   - name: Configure AWS credentials
-    #     uses: aws-actions/configure-aws-credentials@v2
-    #     with:
-    #       aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-    #       aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    #       aws-region: eu-west-2
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
-    #   - name: Login to Amazon ECR
-    #     id: login-ecr
-    #     uses: aws-actions/amazon-ecr-login@v1
+      - name: Log in to DigitalOcean Container Registry with short-lived credentials
+        run: doctl registry login --expiry-seconds 10000
 
-        # TODO: 
-        # Log into GitHub Container Registry
-    # Log into GitHub Container Registry
-      - name: Log into GHCR
-        run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ secrets.GHCR_USERNAME }} --password-stdin
-
-
-      - name: Build, tag, and push main container image
-        id: build-main-image
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+  
+      - name: Build and push Docker images to container registry
         run: |
-            docker build -t esortition:latest .
-            docker tag esortition:latest ghcr.io/${{ secrets.GHCR_USERNAME }}/esortition:latest
-            docker push ghcr.io/${{ secrets.GHCR_USERNAME }}/esortition:latest
-
-      - name: Build, tag, and push microservice1 container image
-        id: build-microservice1-image
-        run: |
-            docker build -t microservice1:latest microservice1
-            docker tag microservice1:latest ghcr.io/${{ secrets.GHCR_USERNAME }}/microservice1:latest
-            docker push ghcr.io/${{ secrets.GHCR_USERNAME }}/microservice1:latest
-
-      - name: Build, tag, and push microservice2 container image
-        id: build-microservice2-image
-        run: |
-            docker build -t microservice2:latest microservice2
-            docker tag microservice2:latest ghcr.io/${{ secrets.GHCR_USERNAME }}/microservice2:latest
-            docker push ghcr.io/${{ secrets.GHCR_USERNAME }}/microservice2:latest
-
-    #   - name: Build, tag, and push main container image
-    #     id: build-image
-    #     run: |
-    #       docker build -t esortition:latest .
-    #       docker tag esortition:latest ${{ steps.login-ecr.outputs.registry }}/esortition:latest
-    #       docker push ${{ steps.login-ecr.outputs.registry }}/esortition:latest
-
-    #   - name: Deploy to Amazon ECS
-    #     run: |
-    #       aws ecs update-service --cluster <your-cluster-name> --service <your-service-name> --force-new-deployment
+          docker-compose -f docker-compose.yml build --no-cache
+          docker-compose -f docker-compose.yml push

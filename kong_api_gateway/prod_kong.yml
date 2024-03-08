@@ -1,0 +1,23 @@
+_format_version: "2.1"
+
+services:
+  - name: admin_mgmt_service
+    url: https://lobster-app-5oxos.ondigitalocean.app/admin-mgmt-service-image/
+    routes:
+      - name: admin_mgmt_service
+        paths:
+          - /admin_mgmt_service
+
+  - name: election_mgmt_service
+    url: https://lobster-app-5oxos.ondigitalocean.app/election-mgmt-service-image/
+    routes:
+      - name: election_mgmt_service
+        paths:
+          - /election_mgmt_service
+
+  - name: voting
+    url: https://lobster-app-5oxos.ondigitalocean.app/voting-manager-image
+    routes:
+      - name: voting
+        paths:
+          - /voting

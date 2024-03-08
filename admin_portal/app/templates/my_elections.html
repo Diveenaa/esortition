@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="title">My Elections</h1>
+    <a href="{{ url_for('main.create_election') }}" class="button is-link is-rounded" style="margin-bottom: 20px; font-weight: bold;">Create New Election</a>
+
+    {% if elections %}
+    <div class="columns is-multiline">
+        {% for election in elections %}
+        <div class="column is-one-third">
+            <div class="card is-rounded">
+                <header class="card-header">
+                    <p class="card-header-title">
+                        {{ election.title }}
+                    </p>
+                </header>
+                <div class="card-content">
+                    <div class="content">
+                        <p>{{ election.description }}</p>
+                        <time datetime="{{ election.created_at }}"></time> to
+                        <time datetime="{{ election.end_date }}"></time>
+                        <details class="mt-2">
+                            <summary>Voters ({{ election.voters|length }})</summary>
+                            <ul>
+                                {% for voter in election.voters %}
+                                {{ voter.email }} - {{ voter.name }}
+                                {% else %}
+                                No voters added yet.
+                                {% endfor %}
+                            </ul>
+                        </details>
+                    </div>
+                </div>
+                <footer class="card-footer">
+                    <a href="{{ url_for('main.download_voters', election_id=election.id) }}"
+                        class="card-footer-item">Download Voters CSV</a>
+                </footer>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="notification is-warning">
+        You have not created any elections yet.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

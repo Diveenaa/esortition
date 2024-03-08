@@ -1,4 +1,9 @@
 .venv
+.voting_app_venv
+.voting_manager_venv
+.election_mgmt_venv
+.admin_portal_venv
+.admin_mgmt_service_venv
 .vscode
 setup_vars.sh
 # Byte-compiled / optimized / DLL files
@@ -57,3 +62,12 @@ docs/_build/
 
 # .DS_Store
 .DS_Store
+
+#vscode workspace
+*.code-workspace
+
+#dump.rdb
+*dump.rdb
+
+serverless
+gateway
