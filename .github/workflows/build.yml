@@ -20,6 +20,15 @@ jobs:
       - name: Install dev-requirements
         run: pip install -r dev-requirements.txt
 
+      # - name: lint check
+      #   run: |
+      #     for dir in */; do
+      #       echo "Running pytest in $dir";
+      #       cd $dir || exit;
+      #       pytest;
+      #       cd ..;
+      #     done
+
   deploy:
     name: Deploy to Container Registry
     needs: build
