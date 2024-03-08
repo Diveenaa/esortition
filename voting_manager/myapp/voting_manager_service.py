@@ -25,16 +25,22 @@ def create_vote():
 
 @app.route('/election_results/<int:election_id>', methods=['GET'])
 def get_election_results(election_id):
-    # Use SQLAlchemy's group_by and func.count to aggregate votes directly in the database
-    results_query = (
-        db.session.query(Vote.option, func.count(Vote.option).label('vote_count'))
-        .filter_by(election_id=election_id)
-        .group_by(Vote.option)
-        .all()
-    )
+    print(election_id)
+    votes = Vote.query.filter_by(election_id=election_id).all()
+    
+    # Aggregate the results
+    results = {}
+    for vote in votes:
+        # Assuming 'option' is the ID of the voted option
+        if vote.option in results:
+            results[vote.option] += 1
+        else:
+            results[vote.option] = 1
     
     # Convert the aggregated results to a list of dictionaries with option_id and vote_count
-    results_list = [{'option_id': option, 'vote_count': vote_count} for option, vote_count in results_query]
+    results_list = [{'option_id': option_id, 'vote_count': count} for option_id, count in results.items()]
     
+    print(results_list)
+    print("test election_results")
     # Return the results as JSON
     return jsonify(results_list), 200

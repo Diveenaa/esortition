@@ -1,5 +1,5 @@
 from flask import request, jsonify
-from datetime import datetime
+from datetime import datetime, timezone
 from .models import Election, Question, Option, Voter
 from . import db
 from . import app
@@ -88,13 +88,32 @@ def get_user_elections():
         elections = Election.query.filter_by(creator_id=id).all()
         election_data = []
         for election in elections:
+            questions = Question.query.filter_by(election_id=election.id).all()
+            questions_data = [{
+                'id': question.id,
+                'text': question.text,
+                'options': [{
+                    'id': option.id,
+                    'text': option.text
+                } for option in question.options]
+            } for question in questions]
+
+            end_date_naive = election.end_date.astimezone(timezone.utc).replace(tzinfo=None)
+
+            if datetime.utcnow() < end_date_naive:
+                status = 'In Progress'
+            else:
+                status = 'Finished'
+
             election_info = {
                 'id': election.id,
                 'title': election.title,
                 'description': election.description,
                 'created_at': election.created_at.strftime('%d-%m-%Y %H:%M'),
                 'end_date': election.end_date.strftime('%d-%m-%Y %H:%M'),
-                'voters': [{'email': voter.email, 'name': voter.name} for voter in election.voters]  # Extract voter emails and names
+                'status': status,
+                'voters': [{'email': voter.email, 'name': voter.name} for voter in election.voters],
+                'questions': questions_data
             }
             election_data.append(election_info)
         print(election_data)

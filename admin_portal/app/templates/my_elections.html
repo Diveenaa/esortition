@@ -20,13 +20,32 @@
                         <p>{{ election.description }}</p>
                         <p>Start: {{ election.created_at }}</p>
                         <p>End: {{ election.end_date }}</p>
+                        <p>Status: 
+                            {% if election.status == 'In Progress' %}
+                                <span style="color: green;">{{ election.status }}</span>
+                            {% else %}
+                                <span>{{ election.status }}</span>
+                            {% endif %}
+                        </p>
+                        <details>
+                            <summary>Results</summary>
+                            {% for question in election.questions %}
+                            <div style="text-align: center;"><strong>{{ question.text }}</strong></div>
+                            <ul style="list-style-type: none; padding: 0; margin: 0 auto; text-align: center;">
+                                {% for option in question.options %}
+                                    <li style="padding: 0; margin: 0;">{{ option.text }} - Votes: {{ option.vote_count|default('0', true) }}</li>
+                                {% endfor %}
+                            </ul>
+                            {% endfor %}
+                        </details>
+                        <div style="margin: 12px;"></div>
                         <details class="mt-2">
                             <summary>Voters ({{ election.voters|length }})</summary>
                             <ul>
                                 {% for voter in election.voters %}
-                                {{ voter.email }} - {{ voter.name }}
+                                <li>{{ voter.email }} - {{ voter.name }}</li>
                                 {% else %}
-                                No voters added yet.
+                                <li>No voters added yet.</li>
                                 {% endfor %}
                             </ul>
                         </details>

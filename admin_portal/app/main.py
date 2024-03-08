@@ -7,8 +7,9 @@ from datetime import datetime
 from io import StringIO
 from .forms import ElectionForm, QuestionForm, OptionForm
 import requests
-from . import ADMIN_MGMT_API_GATEWAY_URL, ELECTION_MGMT_API_GATEWAY_URL
+from . import ADMIN_MGMT_API_GATEWAY_URL, ELECTION_MGMT_API_GATEWAY_URL, VOTE_MANAGER_API
 import logging
+import json
 
 main = Blueprint('main', __name__)
 
@@ -97,7 +98,6 @@ def send_data_to_election_microservice(form_data):
         return False
 
 
-# API gateway needed to get data from backend
 @main.route('/my_elections')
 def my_elections():
     token = session.get('token')
@@ -112,6 +112,23 @@ def my_elections():
         if response and response.status_code == 200:
             logging.info(response.content)
             elections = response.json()
+
+            for election in elections:
+                for question in election['questions']:
+                    for option in question['options']:
+                        results_url = f'{VOTE_MANAGER_API}election_results/{election["id"]}'
+                        results_response = make_request(results_url)
+
+                        if results_response and results_response.status_code == 200:
+                            results = results_response.json()
+                            # find matching result for this option
+                            matched_result = next((result for result in results if result['option_id'] == option['id']), None)
+                            # assign vote count to the option, or 0 if no match
+                            option['vote_count'] = matched_result['vote_count'] if matched_result else 0
+                        else:
+                            logging.error(f"Failed to fetch results for election {election['id']}.")
+
+
             return render_template('my_elections.html', elections=elections, is_authenticated=True)
         else:
             # Log detailed error information
@@ -125,7 +142,6 @@ def my_elections():
         return make_response("Error fetching user elections", 500)
 
 
-# API gateway needed to get data from backend
 @main.route('/download_voters/<int:election_id>')
 def download_voters(election_id):
     token = session.get('token')
