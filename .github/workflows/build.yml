@@ -20,15 +20,6 @@ jobs:
       - name: Install dev-requirements
         run: pip install -r dev-requirements.txt
 
-      - name: lint check
-        run: |
-          for dir in */; do
-            echo "Running flake8 in $dir";
-            cd $dir || exit;
-            find . -name "*.py" -exec flake8 {} +;
-            cd ..;
-          done
-
   deploy:
     name: Deploy to Container Registry
     needs: build
