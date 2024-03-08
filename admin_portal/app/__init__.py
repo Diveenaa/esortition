@@ -4,14 +4,9 @@ from flask_login import LoginManager
 # from flask_wtf import CSRFProtect
 import os
 
-if (os.getenv("FLASK_ENV")=='development'):
-    API_GATEWAY_URL = os.getenv("API_GATEWAY_URL")
-    ADMIN_MGMT_API_GATEWAY_URL = API_GATEWAY_URL + "admin_mgmt_service/"
-    ELECTION_MGMT_API_GATEWAY_URL = API_GATEWAY_URL + "election_mgmt_service/"
-else: 
-    API_GATEWAY_URL = os.getenv("API_GATEWAY_URL")
-    ADMIN_MGMT_API_GATEWAY_URL = API_GATEWAY_URL + "admin_mgmt_service/"
-    ELECTION_MGMT_API_GATEWAY_URL = API_GATEWAY_URL + "election_mgmt_service/"
+API_GATEWAY_URL = os.getenv("API_GATEWAY_URL")
+ADMIN_MGMT_API_GATEWAY_URL = API_GATEWAY_URL + "admin_mgmt_service/"
+ELECTION_MGMT_API_GATEWAY_URL = API_GATEWAY_URL + "election_mgmt_service/"
 
 app = Flask(__name__)
 

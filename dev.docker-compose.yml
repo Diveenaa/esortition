@@ -65,6 +65,7 @@ services:
     command: python3 -m flask run --reload --port=5003 --host=0.0.0.0
     environment:
       - FLASK_APP=/election_mgmt_service-service/myapp:app
+      - API_GATEWAY_URL=http://host.docker.internal:8000/
       - DATABASE_URL=postgresql://postgres:postgres@election_mgmt_db/esortition_election_mgmt
       - FLASK_ENV=development
     ports:

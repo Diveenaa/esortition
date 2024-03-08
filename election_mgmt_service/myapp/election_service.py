@@ -246,12 +246,16 @@ def get_election_details(election_id):
 
 
 def send_vote_email(voter, election_id, end_date):
+    VOTING_LINK = os.getenv("API_GATEWAY_URL")
+
     # Generate the token and voting link
     token = serializer.dumps({'voter_id': voter.id, 'election_id': election_id}, salt='vote-token')
     if (os.getenv("FLASK_ENV")=='development'):
-        voting_link = f"http://localhost:5002/vote?token={token}"
+        voting_link = VOTING_LINK + f"voting_app/vote?token={token}"
     else:
         voting_link = f"https://lobster-app-5oxos.ondigitalocean.app/voting-app-image/vote?token={token}"
+    
+    
     email_service_url = "https://esortition-email-send.azurewebsites.net/api/HttpTrigger2?code=iSYkxWBvsPD9hLrtAB9aMW-r9pbazdvg0sh1ow8SJb8AAzFu5bTkcA=="
 
     # HTML email body
