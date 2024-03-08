@@ -9,6 +9,8 @@
                     Thank You for Voting!
                 {% elif outcome == 'already_voted' %}
                     Already Voted!
+                {% elif outcome == 'election_ended' %}
+                    Election Expired
                 {% else %}
                     Voting Failed
                 {% endif %}
@@ -17,7 +19,9 @@
                 {% if outcome == 'success' %}
                     Your vote has been successfully recorded.
                 {% elif outcome == 'already_voted' %}
-                    You have already cast your vote for this question.
+                    You have already cast your vote for this election.
+                {% elif outcome == 'election_ended' %}
+                    This election finished on <strong>{{ end_date }}</strong> You are no longer able to vote in this election.
                 {% else %}
                     {{ error_message|default("There was an issue recording your vote.") }}
                 {% endif %}

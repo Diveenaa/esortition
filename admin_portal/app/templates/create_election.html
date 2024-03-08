@@ -24,6 +24,11 @@
                 <div class="control">
                     {{ form.end_date(class_="input", type="datetime-local", style="width: 200px; margin: auto; display: block;") }}
                 </div>
+                {% if form.end_date.errors %}
+                    {% for error in form.end_date.errors %}
+                        <p class="help is-danger" style="font-size: 1.2em;">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
             </div>
             <div class="field">
                 <label class="label">{{ form.voter_file.label }}

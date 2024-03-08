@@ -67,9 +67,8 @@ def create_election():
     end_date = election.end_date.strftime('%Y-%m-%d %H:%M:%S')
 
     for voter in voters:
-        # Use executor to run send_vote_email function asynchronously
+        # use executor to run send_vote_email function asynchronously
         executor.submit(send_vote_email, voter, new_election.id, end_date)
-
 
     # Return the received data in the response
     return jsonify({'message': 'Election created successfully'}), 200
@@ -248,6 +247,7 @@ def get_election_details(election_id):
         election = Election.query.get_or_404(election_id)
         question = Question.query.filter_by(election_id=election_id).first()
         options = Option.query.filter_by(question_id=question.id).all()
+        end_date_str = election.end_date.strftime('%Y-%m-%d %H:%M:%S')
 
         # jsonify response
         election_details = {
@@ -255,7 +255,8 @@ def get_election_details(election_id):
                 'id': question.id,
                 'text': question.text
             },
-            'options': [{'id': option.id, 'text': option.text} for option in options]
+            'options': [{'id': option.id, 'text': option.text} for option in options],
+            'end_date': end_date_str
         }
 
         return jsonify(election_details), 200

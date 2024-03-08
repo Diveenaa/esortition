@@ -1,6 +1,5 @@
 from flask import Blueprint, render_template, url_for, session, request, make_response
 from flask_login import login_required, current_user
-
 from flask import flash, redirect, Response
 import csv
 from datetime import datetime
@@ -19,7 +18,7 @@ def index():
     logging.info(verified)
     return render_template('index.html', is_authenticated=verified)
 
-# API Gateway
+
 @main.route('/profile')
 def profile():
     token = session.get('token')
@@ -38,10 +37,6 @@ def profile():
         flash('Failed to fetch profile data')
         return redirect(url_for('auth.login'))
 
-# @main.route('/myvotes')
-# @login_required # only logged in user can see this
-# def myvotes():
-#     return render_template('myvotes.html', name=current_user.name)
 
 @main.route('/create_election', methods=['GET', 'POST'])
 def create_election():
@@ -74,7 +69,6 @@ def create_election():
     return render_template('create_election.html', form=form, is_authenticated=True)
 
 
-# API gateway needed to send data to backend
 def send_data_to_election_microservice(form_data):
 
     ######################## here we want to change to api gateway ##################
